@@ -1,0 +1,585 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Georgia", serif;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background: #fafafa;
+  color: #333;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* -------- HERO -------- */
+.hero {
+  background: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1500&q=80")
+    no-repeat center center / cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero .overlay {
+  background: rgba(0, 0, 0, 0.6); 
+  color: #fff;
+  padding: 3rem 2rem;
+  border-radius: 1.5rem;
+}
+
+.hero .subtitle {
+  font-size: 2rem;
+  letter-spacing: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.hero .title {
+  font-family: "Great Vibes", cursive;
+  font-size: 4rem;
+  margin: 1rem 0;
+}
+
+.hero .date {
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+/* -------- CONTADOR -------- */
+/* -------- CONTADOR -------- */
+
+.contador {
+  padding: 2.5rem 1rem;
+  background: #fff;
+}
+
+#countdown {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+#countdown div {
+  background: #6a1b9a;   /* fondo violeta */
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  min-width: 80px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: 2px solid #6a1b9a;
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #fff;   /* 🔥 todos los textos en blanco */
+}
+
+/* números */
+#countdown div strong {
+  color: #fff;
+  font-size: 1.6rem;
+  display: block;
+}
+
+/* etiquetas (días, horas, minutos, segundos) */
+#countdown span {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* efecto hover en cada bloque */
+#countdown div:hover {
+  transform: translateY(-8px); /* 🔥 se levanta */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+
+/* -------- SECCIONES -------- */
+section {
+  padding: 3rem 1rem;
+  margin-bottom: 1.5rem; /* separa secciones */
+}
+
+.cuando {
+  background: #f8ecf9; /* violeta suave */
+}
+.cuando h3, .cuando p {
+  color: #6a1b9a;
+}
+
+.donde {
+  background: #fff; /* blanco */
+}
+.donde h3, .donde p {
+  color: #333;
+}
+
+.dresscode {
+  background: #f8ecf9;
+}
+.dresscode h3, .dresscode p {
+  color: #6a1b9a;
+}
+
+.regalos {
+  background: #fff;
+}
+.regalos h3, .regalos p {
+  color: #333;
+}
+
+.rsvp {
+  background: #f8ecf9;
+}
+.rsvp h3, .rsvp p {
+  color: #6a1b9a;
+}
+
+h3 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* -------- BOTONES -------- */
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  margin-top: 1rem;
+  background: #6a1b9a;
+  color: #fff;
+  border-radius: 0.8rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.btn:hover {
+  background: #4a0072;
+}
+
+/* -------- FOOTER -------- */
+footer {
+  background: #222;
+  color: #fff;
+  padding: 6rem 1rem;
+  text-align: center;
+}
+
+footer p {
+  margin: 0;
+  font-family: "Great Vibes", cursive;
+  font-size: 3rem;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
+/* -------- BOTÓN DE MÚSICA -------- */
+.music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #6a1b9a;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: background 0.3s ease;
+  z-index: 9999;
+}
+
+.music-btn:hover {
+  background: #4a0072;
+}
+
+
+
+
+
+/* -------- HERO (mejorado) -------- */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5); 
+  z-index: 0;              /* 🔥 que quede detrás */
+  pointer-events: none;    /* 🔥 deja pasar clics */
+}
+
+.hero .overlay {
+  position: relative;
+  z-index: 1; /* el contenido va encima */
+}
+
+
+
+/* -------- TÍTULOS -------- */
+.hero .subtitle {
+  font-size: 2rem;
+  letter-spacing: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  animation: fadeInDown 1.5s ease-out forwards;
+}
+
+.hero .title {
+  font-family: "Great Vibes", cursive;
+  font-size: 4.5rem;
+  margin: 1rem 0;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.6); /* brillo dorado */
+  animation: fadeInUp 2s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 🚫 Forzar que no aparezcan brillos */
+.hero .overlay::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* -------- FRASE DE PORTADA -------- */
+.frase-portada {
+  font-size: 1.4rem;
+  font-weight: 300;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 1s;
+  text-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Botón de portada con animación */
+.hero .btn {
+  opacity: 0;
+  transform: scale(0.9);
+  animation: zoomIn 1s ease forwards;
+  animation-delay: 1.5s;
+}
+
+@keyframes zoomIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* -------- RESPONSIVE: CONTADOR EN CELULAR -------- */
+@media (max-width: 600px) {
+  #countdown {
+    flex-wrap: nowrap;          /* 🔥 evita que baje de línea */
+    justify-content: space-around;
+    gap: 0.4rem;
+  }
+
+  #countdown div {
+    min-width: 60px;            /* 🔥 más chico */
+    padding: 0.6rem 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.6rem;
+  }
+
+  #countdown div strong {
+    font-size: 1.2rem;          /* números más chicos */
+  }
+
+  #countdown span {
+    font-size: 0.6rem;          /* texto más chico */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
