@@ -107,7 +107,7 @@
       <p>   <strong>   </strong></p>
     </section>
 
-    <section class="rsvp">
+    <section id="rsvp">
       <h3>Confirmar asistencia</h3>
       <a href="https://wa.me/5493412179742?text=Hola%20confirmo%20mi%20asistencia" 
          target="_blank" rel="noopener" class="btn">Confirmar por WhatsApp</a>
@@ -180,6 +180,17 @@
       <div><strong>${seconds}</strong><span>segundos</span></div>
     `;
   }, 1000);
+
+  // Forzar el href correcto por si otro script lo pisa para el num de wsp
+  (function () {
+    var a = document.getElementById('rsvp-ws');
+    if (a) {
+      a.href = 'https://wa.me/5493412179742?text=Hola%20confirmo%20mi%20asistencia';
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+  })();
+
 </script>
 
 
