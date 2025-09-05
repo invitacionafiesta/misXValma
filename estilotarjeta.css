@@ -257,8 +257,8 @@ footer p {
 
 /* -------- FRASE DE PORTADA -------- */
 .frase-portada {
-  font-size: 1.4rem;
-  font-weight: 300;
+  font-size: 1.2rem;
+  font-weight: 500;
   font-family: "Montserrat", sans-serif;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
@@ -266,7 +266,24 @@ footer p {
   animation: fadeIn 2s ease forwards;
   animation-delay: 1s;
   text-shadow: 0 0 8px rgba(0,0,0,0.5);
+  color: #b9a1c9;            /* 👈 lavanda */
+  text-transform: uppercase; /* 👈 mayúsculas */
+  letter-spacing: 0.12em;    /* 👈 espaciado */
 }
+
+
+/* -------- TÍTULO DE PORTADA -------- */
+.titulo-portada {
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #8f6da8;   /* lavanda más oscuro */
+  margin-bottom: 1rem;
+}
+
+
 
 @keyframes fadeIn {
   from { opacity: 0; }
