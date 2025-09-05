@@ -119,7 +119,7 @@
   </div>
 
   <!-- Audio -->
-  <audio id="bg-music" controls>
+  <audio id="bg-music" controls preload="auto">
     <source src="alma.mp3" type="audio/mpeg">
     Tu navegador no soporta audio HTML5.
   </audio>
@@ -127,42 +127,47 @@
    
 
 <script>
-  // Entrar → iniciar música + mostrar invitación
-  document.getElementById("entrar-btn").addEventListener("click", () => {
-    const portada   = document.getElementById("portada");
-    const invitacion= document.getElementById("invitacion");
-    const music     = document.getElementById("bg-music");
-    const btn       = document.getElementById("music-btn");
-    const audio = document.getElementById("miCancion");
+  // Referencias globales
+  const portada    = document.getElementById("portada");
+  const invitacion = document.getElementById("invitacion");
+  const entrarBtn  = document.getElementById("entrar-btn");
+  const music      = document.getElementById("bg-music");
+  const btn        = document.getElementById("music-btn");
 
+  // Función segura para reproducir desde un segundo específico
+  function playFrom(seconds) {
+    const go = () => {
+      try { music.currentTime = seconds; } catch (e) { /* iOS puede tardar un toque */ }
+      music.play()
+        .then(() => { btn.textContent = "⏸️"; })
+        .catch(err => {
+          console.log("No se pudo reproducir automáticamente:", err);
+          btn.textContent = "▶️";
+        });
+    };
+
+    // Si ya tiene metadata, podemos saltar ya; si no, esperamos
+    if (music.readyState >= 1) { // HAVE_METADATA o más
+      go();
+    } else {
+      const onMeta = () => { music.removeEventListener("loadedmetadata", onMeta); go(); };
+      music.addEventListener("loadedmetadata", onMeta);
+    }
+  }
+
+  // Click en "Entrar": mostramos tarjeta y arrancamos música desde 1:00
+  entrarBtn.addEventListener("click", (e) => {
+    e.preventDefault();
     portada.style.display = "none";
     invitacion.style.display = "block";
     btn.style.display = "flex";
-
-    music.play().then(() => {
-      btn.textContent = "⏸️";
-    }).catch(err => {
-      console.log("No se pudo reproducir automáticamente:", err);
-      btn.textContent = "▶️";
-    });
+    playFrom(60); // <<< CAMBIÁ ACÁ el segundo de inicio si querés
   });
 
-
-  //hacer que la cancion arranque en un tiempo determinado
-   audio.addEventListener("loadedmetadata", () => {
-    audio.currentTime = 60; // arranca en 1:00
-    audio.play();           // empieza solo
-  });
-
-  
-  // Botón música
-  document.getElementById("music-btn").addEventListener("click", () => {
-    const music = document.getElementById("bg-music");
-    const btn   = document.getElementById("music-btn");
-
+  // Botón flotante Play/Pause
+  btn.addEventListener("click", () => {
     if (music.paused) {
-      music.play();
-      btn.textContent = "⏸️";
+      music.play().then(() => { btn.textContent = "⏸️"; });
     } else {
       music.pause();
       btn.textContent = "▶️";
@@ -172,16 +177,13 @@
   // --- Contador ---
   const countdown = document.getElementById("countdown");
   const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
-
   setInterval(() => {
     const now = new Date().getTime();
     const distance = targetDate - now;
-
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
     countdown.innerHTML = `
       <div><strong>${days}</strong><span>días</span></div>
       <div><strong>${hours}</strong><span>horas</span></div>
@@ -190,17 +192,9 @@
     `;
   }, 1000);
 
-  // Forzar el href correcto por si otro script lo pisa para el num de wsp
-  (function () {
-    var a = document.getElementById('rsvp-ws');
-    if (a) {
-      a.href = 'https://wa.me/5493412179742?text=Hola%20confirmo%20mi%20asistencia';
-      a.target = '_blank';
-      a.rel = 'noopener';
-    }
-  })();
 
 </script>
+
 
 
 </body>
