@@ -119,7 +119,7 @@
   </div>
 
   <!-- Audio -->
-  <audio id="bg-music" loop>
+  <audio id="bg-music" controls>
     <source src="alma.mp3" type="audio/mpeg">
     Tu navegador no soporta audio HTML5.
   </audio>
@@ -133,6 +133,7 @@
     const invitacion= document.getElementById("invitacion");
     const music     = document.getElementById("bg-music");
     const btn       = document.getElementById("music-btn");
+    const audio = document.getElementById("miCancion");
 
     portada.style.display = "none";
     invitacion.style.display = "block";
@@ -146,6 +147,14 @@
     });
   });
 
+
+  //hacer que la cancion arranque en un tiempo determinado
+   audio.addEventListener("loadedmetadata", () => {
+    audio.currentTime = 60; // arranca en 1:00
+    audio.play();           // empieza solo
+  });
+
+  
   // Botón música
   document.getElementById("music-btn").addEventListener("click", () => {
     const music = document.getElementById("bg-music");
