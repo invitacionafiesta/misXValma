@@ -146,11 +146,6 @@
     });
   });
 
-  // hacer que la cancion arranque en el segundo que quieras
-  audio.addEventListener("loadedmetadata", () => {
-    audio.currentTime = 60; 
-  });
-
   // Botón música
   document.getElementById("music-btn").addEventListener("click", () => {
     const music = document.getElementById("bg-music");
