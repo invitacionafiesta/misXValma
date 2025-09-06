@@ -411,7 +411,7 @@ header.hero {
 .frase {
   padding: 2rem 1rem;
   text-align: center;
-  font-family: "Montserrat", sans-serif;
+  font-family: "garamond";
   font-size: 1.4rem;
   font-weight: 500;
   line-height: 1.6;
@@ -427,12 +427,7 @@ header.hero {
 
 .frase-medio p,
 .frase-rsvp p {
-  color: #6a1b9a; /* violeta elegante */
-  font-style: italic;
+  color: #fff; /* violeta elegante */
+  background: #ffcee4;
 }
 
-/* Animación */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
