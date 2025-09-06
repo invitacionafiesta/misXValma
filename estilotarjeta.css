@@ -88,7 +88,7 @@ section {
 
 /* 1° sección: BLANCO (texto rosa) */
 .cuando {
-  background: #f1d1df; 
+  background: #ffe6f1; 
 }
 .cuando h3, .cuando p {
   color: #fff;
@@ -99,7 +99,7 @@ section {
   background: #fff;
 }
 .donde h3, .donde p {
-  color: #f1d1df;
+  color: #ffe6f1;
 }
 
 /* 3° sección: BLANCO (texto rosa) */
@@ -115,12 +115,12 @@ section {
   background: #fff;
 }
 .regalos h3, .regalos p {
-  color: #f1d1df;
+  color: #ffe6f1;
 }
 
 /* 5° sección: BLANCO (texto rosa) */
 .rsvp {
-  background: #f1d1df;
+  background: #ffe6f1;
 }
 .rsvp h3, .rsvp p {
   color: #fff;
