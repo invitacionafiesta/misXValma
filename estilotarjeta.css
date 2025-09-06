@@ -147,12 +147,12 @@ h3 {
 }
 
 .btn:hover {
-  background: #ffcee4;
+  background: #ffe6f1;
 }
 
 /* -------- FOOTER -------- */
 footer {
-  background: #222;
+  background: #ffe6f1;
   color: #fff;
   padding: 6rem 1rem;
   text-align: center;
@@ -171,7 +171,7 @@ footer p {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #ffcee4;
+  background: #ffe6f1;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -185,7 +185,7 @@ footer p {
 }
 
 .music-btn:hover {
-  background: #ffcee4;
+  background: #ffe6f1;
 }
 
 
@@ -227,7 +227,7 @@ footer p {
   animation: fadeIn 2s ease forwards;
   animation-delay: 1s;
   text-shadow: 0 0 8px;
-  color: #ffcee4;         /* rosa suave */
+  color: #ffe6f1;         /* rosa suave */
   text-transform: uppercase; /* 👈 mayúsculas */
   letter-spacing: 0.12em;    /* 👈 espaciado */
 }
@@ -240,7 +240,7 @@ footer p {
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #ffcee4;        /* rosa suave */
+  color: #ffe6f1;        /* rosa suave */
   margin-bottom: 1rem;
 }
 
