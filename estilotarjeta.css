@@ -255,6 +255,22 @@ footer p {
   display: none !important;
 }
 
+
+/* -------- PORTADA -------- */
+#portada {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffcee4;  /* 👈 fondo rosa */
+  z-index: 9999;
+  text-align: center;
+  padding: 2rem;
+}
+
+
+
 /* -------- FRASE DE PORTADA -------- */
 .frase-portada {
   font-size: 1.2rem;
@@ -266,7 +282,7 @@ footer p {
   animation: fadeIn 2s ease forwards;
   animation-delay: 1s;
   text-shadow: 0 0 8px rgba(0,0,0,0.5);
-  color: #b9a1c9;            /* 👈 lavanda */
+  color: #ffcee4;         /* rosa suave */
   text-transform: uppercase; /* 👈 mayúsculas */
   letter-spacing: 0.12em;    /* 👈 espaciado */
 }
@@ -328,6 +344,12 @@ footer p {
     font-size: 0.6rem;          /* texto más chico */
   }
 }
+
+/* Forzar fondo rosa en portada */
+#portada {
+  background: #ffcee4 !important; /* rosa suave */
+}
+
 
 
 
