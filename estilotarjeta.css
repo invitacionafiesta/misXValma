@@ -360,7 +360,7 @@ header.hero .overlay h2#subtitle-portada.subtitle { all: unset !important; }
   font-weight: 300 !important;       /* fino */
   letter-spacing: .28em !important;
   text-transform: uppercase !important;
-  font-size: clamp(4rem, 6vw, 8rem) !important;
+  font-size: 6rem !important;
   color: #6a1b9a !important;         /* violeta lavanda */
   text-shadow: none !important;      /* 🔥 sin brillos */
 }
@@ -370,7 +370,7 @@ header.hero .overlay h2#subtitle-portada.subtitle { all: unset !important; }
   font-family: "Montserrat", sans-serif !important;
   font-weight: 300 !important;       /* fino */
   text-transform: uppercase !important; /* 👈 si también querés en mayúsculas */
-  font-size: clamp(8rem, 10vw, 12rem) !important; /* más grande */
+  font-size: 10rem !important; /* más grande */
   line-height: 1.05 !important;
   color: #6a1b9a !important;         /* mismo violeta lavanda */
   text-shadow: none !important;      /* 🔥 sin brillos */
