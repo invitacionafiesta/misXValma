@@ -354,8 +354,8 @@ footer p {
 /*boton de entrar en la portada*/
 
 #entrar-btn {
-  background: #ffcee4;  /* fondo rosa */
-  color: #fff;       /* texto violeta */
+  background: #ffcee4 !important;  /* fondo rosa */
+  color: #fff !important;       /* texto violeta */
   font-size: 1.2rem;
   border-radius: 2rem;  /* más redondeado */
   padding: 1rem 2rem;
