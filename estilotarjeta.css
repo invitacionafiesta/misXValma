@@ -42,7 +42,7 @@ body {
 }
 
 #countdown div {
-  background: #ffcee4;   /* fondo violeta */
+  background: #ffcee4;  
   padding: 1rem 1.2rem;
   border-radius: 1rem;
   min-width: 80px;
@@ -88,42 +88,42 @@ section {
 
 /* 1° sección: BLANCO (texto rosa) */
 .cuando {
-  background: #fff; 
+  background: #f1d1df; 
 }
 .cuando h3, .cuando p {
-  color: #ffcee4;
+  color: #fff;
 }
 
 /* 2° sección: ROSA (texto blanco) */
 .donde {
-  background: #ffcee4;
+  background: #fff;
 }
 .donde h3, .donde p {
-  color: #fff;
+  color: #f1d1df;
 }
 
 /* 3° sección: BLANCO (texto rosa) */
 .dresscode {
-  background: #fff;
+  background: #f1d1df;
 }
 .dresscode h3, .dresscode p {
-  color: #ffcee4;
+  color: #fff;
 }
 
 /* 4° sección: ROSA (texto blanco) */
 .regalos {
-  background: #ffcee4;
+  background: #fff;
 }
 .regalos h3, .regalos p {
-  color: #fff;
+  color: #f1d1df;
 }
 
 /* 5° sección: BLANCO (texto rosa) */
 .rsvp {
-  background: #fff;
+  background: #f1d1df;
 }
 .rsvp h3, .rsvp p {
-  color: #ffcee4;
+  color: #fff;
 }
 
 
@@ -299,7 +299,7 @@ footer p {
 /*boton de entrar en la portada*/
 
 #entrar-btn {
-  background: #ffcee4 !important;  /* fondo rosa */
+  background: #f1d1df !important;  /* fondo rosa */
   color: #fff !important;       /* texto violeta */
   font-size: 1.2rem;
   border-radius: 2rem;  /* más redondeado */
