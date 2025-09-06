@@ -24,33 +24,6 @@ body {
   position: relative;
 }
 
-.hero .overlay {
-  color:inherit;
-  padding: 3rem 2rem;
-  border-radius: 1.5rem;
-}
-
-.hero .subtitle {
-  color: #ffcee4;
-  font-size: 2rem;
-  letter-spacing: 4px;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-.hero .title {
-  font-family: "Great Vibes", cursive;
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  color: #ffcee4;              
-  text-shadow: 0 1px 0 rgba(255,255,255,.4);
-  -webkit-text-stroke: 0;       /* sin contorno */
-}
-
-
-.hero .date {
-  font-size: 1.2rem;
-  font-weight: 300;
-}
 
 /* -------- CONTADOR -------- */
 /* -------- CONTADOR -------- */
