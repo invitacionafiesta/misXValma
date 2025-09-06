@@ -90,7 +90,7 @@ section {
   background: #f8ecf9; /* violeta suave */
 }
 .cuando h3, .cuando p {
-  color: #6a1b9a;
+  color: #ffcee4;
 }
 
 .donde {
@@ -104,7 +104,7 @@ section {
   background: #f8ecf9;
 }
 .dresscode h3, .dresscode p {
-  color: #6a1b9a;
+  color: #ffcee4;
 }
 
 .regalos {
@@ -118,7 +118,7 @@ section {
   background: #f8ecf9;
 }
 .rsvp h3, .rsvp p {
-  color: #6a1b9a;
+  color: #ffcee4;
 }
 
 h3 {
@@ -132,7 +132,7 @@ h3 {
   display: inline-block;
   padding: 0.8rem 1.5rem;
   margin-top: 1rem;
-  background: #4a0072;
+  background: #ffcee4;
   color: #fff; 
   border-radius: 0.8rem;
   text-decoration: none;
@@ -141,7 +141,7 @@ h3 {
 }
 
 .btn:hover {
-  background: #4a0072;
+  background: #ffcee4;
 }
 
 /* -------- FOOTER -------- */
@@ -165,7 +165,7 @@ footer p {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #6a1b9a;
+  background: #ffcee4;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -179,7 +179,7 @@ footer p {
 }
 
 .music-btn:hover {
-  background: #4a0072;
+  background: #ffcee4;
 }
 
 
