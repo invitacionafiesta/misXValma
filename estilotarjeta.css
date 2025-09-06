@@ -369,6 +369,16 @@ footer p {
   color: #ffcee4;
 }
 
+/*que se vea igual en pc y celular*/
+
+#entrar-btn {
+  -webkit-appearance: none; /* quita estilo iOS */
+  -moz-appearance: none;
+  appearance: none;
+
+  border: none;       /* elimina bordes nativos */
+  outline: none;      /* quita contorno raro */
+}
 
 
 
