@@ -376,7 +376,7 @@ html {
   font-weight: 300 !important;
   text-transform: uppercase !important;
   letter-spacing: .28em !important;
-  font-size: 3rem !important;    /* 👈 cambiá este número si lo querés más grande/chico */
+  font-size: 2rem !important;    /* 👈 cambiá este número si lo querés más grande/chico */
   line-height: 1.1 !important;
   color: #fff !important;
   margin: 0 0 .4rem !important;
@@ -387,7 +387,7 @@ html {
   font-family: "Montserrat", sans-serif !important; /* o "Great Vibes", cursive si querés caligráfica */
   font-weight: 300 !important;
   text-transform: uppercase !important;             /* sacalo si querés “Alma” con minúsculas */
-  font-size: 8rem !important;                       /* 👈 tamaño fijo: subilo/bajalo a gusto */
+  font-size: 4rem !important;                       /* 👈 tamaño fijo: subilo/bajalo a gusto */
   line-height: 1.05 !important;
   color: #fff !important;
   text-shadow: none !important;
