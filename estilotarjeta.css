@@ -42,13 +42,13 @@ body {
 }
 
 #countdown div {
-  background: #6a1b9a;   /* fondo violeta */
+  background: #ffcee4;   /* fondo violeta */
   padding: 1rem 1.2rem;
   border-radius: 1rem;
   min-width: 80px;
   font-size: 1.4rem;
   font-weight: 700;
-  border: 2px solid #6a1b9a;
+  border: 2px solid #ffcee4;
   box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -87,7 +87,7 @@ section {
 }
 
 .cuando {
-  background: #f8ecf9; /* violeta suave */
+  background: #fff; 
 }
 .cuando h3, .cuando p {
   color: #ffcee4;
@@ -97,7 +97,7 @@ section {
   background: #fff; /* blanco */
 }
 .donde h3, .donde p {
-  color: #333;
+  color: #ffcee4;
 }
 
 .dresscode {
@@ -111,7 +111,7 @@ section {
   background: #fff;
 }
 .regalos h3, .regalos p {
-  color: #333;
+  color: #ffcee4;
 }
 
 .rsvp {
