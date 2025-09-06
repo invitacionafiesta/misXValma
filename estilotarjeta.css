@@ -1,91 +1,10 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Georgia", serif;
-}
-
-body {
-  font-family: "Montserrat", sans-serif;
-  background: #fafafa;
-  color: #333;
-  text-align: center;
-  line-height: 1.6;
-}
-
-/* -------- HERO -------- */
-.hero {
-  background: url("https://i.pinimg.com/564x/a7/ef/c8/a7efc8d8923402b183e406ded62c15b8.jpg")
-    no-repeat center center / cover;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-
-/* -------- CONTADOR -------- */
-/* -------- CONTADOR -------- */
-
-.contador {
-  padding: 2.5rem 1rem;
-  background: #fff;
-}
-
-#countdown {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
-#countdown div {
-  background: #ffcee4;   /* fondo violeta */
-  padding: 1rem 1.2rem;
-  border-radius: 1rem;
-  min-width: 80px;
-  font-size: 1.4rem;
-  font-weight: 700;
-  border: 2px solid #ffcee4;
-  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  color: #fff;   /* 🔥 todos los textos en blanco */
-}
-
-/* números */
-#countdown div strong {
-  color: #fff;
-  font-size: 1.6rem;
-  display: block;
-}
-
-/* etiquetas (días, horas, minutos, segundos) */
-#countdown span {
-  display: block;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  margin-top: 0.25rem;
-  font-weight: 500;
-  color: #fff;
-  opacity: 0.9;
-}
-
-/* efecto hover en cada bloque */
-#countdown div:hover {
-  transform: translateY(-8px); /* 🔥 se levanta */
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-}
-
-
 /* -------- SECCIONES -------- */
 section {
   padding: 3rem 1rem;
   margin-bottom: 1.5rem; /* separa secciones */
 }
 
+/* 1° sección: BLANCO (texto rosa) */
 .cuando {
   background: #fff; 
 }
@@ -93,310 +12,34 @@ section {
   color: #ffcee4;
 }
 
+/* 2° sección: ROSA (texto blanco) */
 .donde {
-  background: #fff; /* blanco */
+  background: #ffcee4;
 }
 .donde h3, .donde p {
-  color: #ffcee4;
+  color: #fff;
 }
 
+/* 3° sección: BLANCO (texto rosa) */
 .dresscode {
-  background: #f8ecf9;
+  background: #fff;
 }
 .dresscode h3, .dresscode p {
   color: #ffcee4;
 }
 
+/* 4° sección: ROSA (texto blanco) */
 .regalos {
-  background: #fff;
+  background: #ffcee4;
 }
 .regalos h3, .regalos p {
-  color: #ffcee4;
+  color: #fff;
 }
 
+/* 5° sección: BLANCO (texto rosa) */
 .rsvp {
-  background: #f8ecf9;
+  background: #fff;
 }
 .rsvp h3, .rsvp p {
   color: #ffcee4;
-}
-
-h3 {
-  margin-bottom: 1rem;
-  font-size: 1.8rem;
-  font-weight: 600;
-}
-
-/* -------- BOTONES -------- */
-.btn {
-  display: inline-block;
-  padding: 0.8rem 1.5rem;
-  margin-top: 1rem;
-  background: #ffcee4;
-  color: #fff; 
-  border-radius: 0.8rem;
-  text-decoration: none;
-  font-weight: 500;
-  transition: 0.3s ease;
-}
-
-.btn:hover {
-  background: #ffcee4;
-}
-
-/* -------- FOOTER -------- */
-footer {
-  background: #222;
-  color: #fff;
-  padding: 6rem 1rem;
-  text-align: center;
-}
-
-footer p {
-  margin: 0;
-  font-family: "batang";
-  font-size: 3rem;
-  font-weight: normal;
-  letter-spacing: 1px;
-}
-
-/* -------- BOTÓN DE MÚSICA -------- */
-.music-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #ffcee4;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: background 0.3s ease;
-  z-index: 9999;
-}
-
-.music-btn:hover {
-  background: #ffcee4;
-}
-
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* 🚫 Forzar que no aparezcan brillos */
-.hero .overlay::after {
-  content: none !important;
-  display: none !important;
-}
-
-
-/* -------- PORTADA -------- */
-#portada {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff !important;  /* 👈 fondo rosa */
-  z-index: 9999;
-  text-align: center;
-  padding: 2rem;
-}
-
-
-
-/* -------- FRASE DE PORTADA -------- */
-.frase-portada {
-  font-size: 1.2rem;
-  font-weight: 500;
-  font-family: "Montserrat", sans-serif;
-  margin-top: 0.5rem;
-  margin-bottom: 2rem;
-  opacity: 0;
-  animation: fadeIn 2s ease forwards;
-  animation-delay: 1s;
-  text-shadow: 0 0 8px;
-  color: #ffcee4;         /* rosa suave */
-  text-transform: uppercase; /* 👈 mayúsculas */
-  letter-spacing: 0.12em;    /* 👈 espaciado */
-}
-
-
-/* -------- TÍTULO DE PORTADA -------- */
-.titulo-portada {
-  font-family: "Montserrat", sans-serif;
-  font-size: 2.8rem;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #ffcee4;        /* rosa suave */
-  margin-bottom: 1rem;
-}
-
-
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-/* Botón de portada con animación */
-.hero .btn {
-  opacity: 0;
-  transform: scale(0.9);
-  animation: zoomIn 1s ease forwards;
-  animation-delay: 1.5s;
-}
-
-@keyframes zoomIn {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* -------- RESPONSIVE: CONTADOR EN CELULAR -------- */
-@media (max-width: 600px) {
-  #countdown {
-    flex-wrap: nowrap;          /* 🔥 evita que baje de línea */
-    justify-content: space-around;
-    gap: 0.4rem;
-  }
-
-  #countdown div {
-    min-width: 60px;            /* 🔥 más chico */
-    padding: 0.6rem 0.5rem;
-    font-size: 1rem;
-    border-radius: 0.6rem;
-  }
-
-  #countdown div strong {
-    font-size: 1.2rem;          /* números más chicos */
-  }
-
-  #countdown span {
-    font-size: 0.6rem;          /* texto más chico */
-  }
-}
-
-/* Forzar fondo rosa en portada */
-#portada {
-  background: #ffffff !important; /* rosa suave */
-}
-
-
-/*boton de entrar en la portada*/
-
-#entrar-btn {
-  background: #ffcee4 !important;  /* fondo rosa */
-  color: #fff !important;       /* texto violeta */
-  font-size: 1.2rem;
-  border-radius: 2rem;  /* más redondeado */
-  padding: 1rem 2rem;
-  border: 2px solid #4a0072;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-
-#entrar-btn:hover {
-  background: #fff;
-  color: #ffcee4;
-}
-
-/*que se vea igual en pc y celular*/
-
-#entrar-btn {
-  -webkit-appearance: none; /* quita estilo iOS */
-  -moz-appearance: none;
-  appearance: none;
-
-  border: none;       /* elimina bordes nativos */
-  outline: none;      /* quita contorno raro */
-}
-
-
-
-/*DEFINITIVO*/
-
-/* 1) Anula lo anterior para esos dos elementos */
-header.hero .overlay h1#title-portada.title,
-header.hero .overlay h2#subtitle-portada.subtitle { all: unset !important; }
-
-
-
-
-
-/* Forzar tamaño (super específico) */
-header.hero .overlay h2#subtitle-portada.subtitle {
-  font-family: "Montserrat", sans-serif !important;
-  font-weight: 300 !important;
-  letter-spacing: .28em !important;
-  text-transform: uppercase !important;
-  font-size: 96px !important;   /* probá grande en px para comprobar */
-  color: #6a1b9a !important;
-  text-shadow: none !important;
-}
-
-header.hero .overlay h1#title-portada.title {
-  font-family: "Montserrat", sans-serif !important;
-  font-weight: 300 !important;
-  text-transform: uppercase !important;
-  font-size: 160px !important;  /* probá grande en px para comprobar */
-  line-height: 1.05 !important;
-  color: #6a1b9a !important;
-  text-shadow: none !important;
-}
-
-/* Evitar “auto-escala” de Safari/iOS y Android */
-html {
-  -webkit-text-size-adjust: 100%s;
-  text-size-adjust: 100%;
-}
-
-
-/* Quitar fondo/sombra del contenedor si no querés la tarjeta blanca */
-.hero-card{
-  background: transparent !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding: 0 !important;
-  text-align: center;
-}
-
-/* Subtítulo: MIS XV (fino, mayúsculas) */
-.hero-sub{
-  font-family: "Montserrat", sans-serif !important;
-  font-weight: 300 !important;
-  text-transform: uppercase !important;
-  letter-spacing: .28em !important;
-  font-size: 2rem !important;    /* 👈 cambiá este número si lo querés más grande/chico */
-  line-height: 1.1 !important;
-  color: #fff !important;
-  margin: 0 0 .4rem !important;
-}
-
-/* Título: Alma (fino, grande) */
-.hero-name{
-  font-family: "Montserrat", sans-serif !important; /* o "Great Vibes", cursive si querés caligráfica */
-  font-weight: 300 !important;
-  text-transform: uppercase !important;             /* sacalo si querés “Alma” con minúsculas */
-  font-size: 4rem !important;                       /* 👈 tamaño fijo: subilo/bajalo a gusto */
-  line-height: 1.05 !important;
-  color: #fff !important;
-  text-shadow: none !important;
-  margin: 0 !important;
-}
-
-/* Por si tenías reglas viejas que meten fondo en la hero */
-.hero::after { content: none !important; }
-
-header.hero {
-  background: url("https://i.pinimg.com/564x/a7/ef/c8/a7efc8d8923402b183e406ded62c15b8.jpg") center center / cover no-repeat !important;
 }
