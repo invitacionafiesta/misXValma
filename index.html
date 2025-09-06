@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación Mis XV - Alma</title>
+  <link rel="stylesheet" href="estilotarjeta.css">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+  <style>
+    /* --- Portada --- */
+    #portada {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6a1b9a, #c59fc9);
+      color: white;
+      font-family: "Great Vibes", cursive;
+      text-align: center;
+      z-index: 9999;
+    }
+    #portada h1 {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+    }
+    #entrar-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #6a1b9a;
+      font-size: 1.5rem;
+      border-radius: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: "Great Vibes", cursive;
+    }
+    #entrar-btn:hover {
+      background: #f3e5f5;
+    }
+
+    /* Botón música */
+    #music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px; height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Portada -->
+ <div id="portada">
+   <div class="portada-contenido">
+    <h1 class="titulo-portada">Mis XV Alma</h1>
+    <p class="frase-portada">Quiero que seas parte de este momento</p>
+    <a href="#" class="btn" id="entrar-btn">Entrar</a>
+   </div>
+ </div>
+
+
+  <!-- Contenido de la invitación -->
+  <div id="invitacion" style="display:none;">
+    <header class="hero">
+      <div class="overlay">
+        <h1 class="subtitle">MIS XV</h1>
+        <h2 class="title" style="font-family:'Raleway',sans-serif !important;
+           font-weight:300 !important;
+           color:#e699db !important;
+           text-shadow:0 1px 3px rgba(255,255,255,.55),
+                        0 2px 8px rgba(0,0,0,.12) !important;"
+        >Alma</h2>
+      </div>
+    </header>
+
+    <section class="contador">
+     <h3>Faltan</h3>
+     <div id="countdown"></div>
+    </section>
+    
+    <section class="cuando">
+      <h3>¿Cuándo?</h3>
+      <p>Sabado 22 de Noviembre 21:00 hs - 5hs</p>
+    </section>
+
+    <section class="donde">
+      <h3>¿Dónde?</h3>
+      <p>Nebraska, Rosario</p>
+      <a href="https://www.google.com/maps?q=Nebraska+Rosario" target="_blank" class="btn">Cómo llegar</a>
+    </section>
+
+    <section class="dresscode">
+      <h3>Dress Code</h3>
+      <p>Elegante Sport</p>
+    </section>
+
+    <section class="regalos">
+      <h3>Regalos</h3>
+      <p>   <strong>   </strong></p>
+    </section>
+
+    <section id="rsvp">
+      <h3>Confirmar asistencia</h3>
+      <a href="https://wa.me/5493412719742?text=%C2%A1Hola%20Alma!%20Confirmo%20mi%20asistencia%20🎉" 
+         target="_blank" rel="noopener" class="btn">Confirmar por WhatsApp</a>
+    </section>
+
+    <footer>
+      <p>Con cariño, Alma</p>
+    </footer>
+  </div>
+
+  <!-- Audio -->
+  <audio id="bg-music" controls preload="auto">
+    <source src="cancion ariana grande.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio HTML5.
+  </audio>
+  <button id="music-btn" style="display:none;">▶️</button>
+   
+
+<script>
+  // Referencias globales
+  const portada    = document.getElementById("portada");
+  const invitacion = document.getElementById("invitacion");
+  const entrarBtn  = document.getElementById("entrar-btn");
+  const music      = document.getElementById("bg-music");
+  const btn        = document.getElementById("music-btn");
+
+  // Función segura para reproducir desde un segundo específico
+  function playFrom(seconds) {
+    const go = () => {
+      try { music.currentTime = seconds; } catch (e) { /* iOS puede tardar un toque */ }
+      music.play()
+        .then(() => { btn.textContent = "⏸️"; })
+        .catch(err => {
+          console.log("No se pudo reproducir automáticamente:", err);
+          btn.textContent = "▶️";
+        });
+    };
+
+    // Si ya tiene metadata, podemos saltar ya; si no, esperamos
+    if (music.readyState >= 1) { // HAVE_METADATA o más
+      go();
+    } else {
+      const onMeta = () => { music.removeEventListener("loadedmetadata", onMeta); go(); };
+      music.addEventListener("loadedmetadata", onMeta);
+    }
+  }
+
+  // Click en "Entrar": mostramos tarjeta y arrancamos música desde 1:00
+  entrarBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    portada.style.display = "none";
+    invitacion.style.display = "block";
+    btn.style.display = "flex";
+    playFrom(29); // <<< CAMBIÁ ACÁ el segundo de inicio si querés
+  });
+
+  // Botón flotante Play/Pause
+  btn.addEventListener("click", () => {
+    if (music.paused) {
+      music.play().then(() => { btn.textContent = "⏸️"; });
+    } else {
+      music.pause();
+      btn.textContent = "▶️";
+    }
+  });
+
+  // --- Contador ---
+  const countdown = document.getElementById("countdown");
+  const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
+  setInterval(() => {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    countdown.innerHTML = `
+      <div><strong>${days}</strong><span>días</span></div>
+      <div><strong>${hours}</strong><span>horas</span></div>
+      <div><strong>${minutes}</strong><span>minutos</span></div>
+      <div><strong>${seconds}</strong><span>segundos</span></div>
+    `;
+  }, 1000);
+
+
+</script>
+
+
+
+</body>
+</html>
