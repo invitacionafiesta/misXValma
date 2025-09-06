@@ -295,7 +295,7 @@ footer p {
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #8f6da8;   /* lavanda más oscuro */
+  color: #ffcee4;        /* rosa suave */
   margin-bottom: 1rem;
 }
 
@@ -347,7 +347,7 @@ footer p {
 
 /* Forzar fondo rosa en portada */
 #portada {
-  background: #ffcee4 !important; /* rosa suave */
+  background: #ffffff !important; /* rosa suave */
 }
 
 
