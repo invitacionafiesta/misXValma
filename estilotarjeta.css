@@ -396,3 +396,7 @@ html {
 
 /* Por si tenías reglas viejas que meten fondo en la hero */
 .hero::after { content: none !important; }
+
+header.hero {
+  background: url("https://i.pinimg.com/564x/a7/ef/c8/a7efc8d8923402b183e406ded62c15b8.jpg") center center / cover no-repeat !important;
+}
