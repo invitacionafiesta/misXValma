@@ -432,23 +432,24 @@ header.hero {
   background: #ffcee4;
 }
 
-/* Botón play/pause simple */
-#playpause-btn {
-  background: #ffcee4;       /* rosa suave */
-  color: white;              /* texto blanco */
-  border: none;
-  border-radius: 50%;        /* forma circular */
-  width: 60px;
-  height: 60px;
-  font-size: 1.5rem;         /* tamaño del icono */
-  cursor: pointer;
-  display: flex;
+/* reset del botón viejo y estilo rosa simple */
+#music-btn {
+  all: unset;                            /* borra estilos heredados */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffcee4 !important;        /* rosa */
+  color: #fff !important;
+  display: flex;                          /* para centrar el icono */
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  transition: background 0.3s ease;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,.15);
+  z-index: 9999;
 }
 
-#playpause-btn:hover {
-  background: #f8a6c8;       /* rosa un poco más fuerte al pasar */
-}
+#music-btn:hover { background: #f7b6d2 !important; }
