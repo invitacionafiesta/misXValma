@@ -440,7 +440,7 @@ section.frase p{
   right: 20px;
   display: flex; 
   background: #ffe6f1;          /* rosa claro */
-  color:#ffffff;                  /* texto blanco */
+  color:#ffe6f1;                  /* texto blanco */
   border: none;                 /* sin borde */
   border-radius: 50%;           /* forma circular */
   width: 60px;
@@ -455,5 +455,5 @@ section.frase p{
 }
 
 #music-btn:hover {
-  background: #ffe6f1;          /* rosa un poquito más oscuro al pasar */
+  background: #fff;          /* rosa un poquito más oscuro al pasar */
 }
