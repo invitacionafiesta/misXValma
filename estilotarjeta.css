@@ -428,17 +428,53 @@ header.hero {
 
 /* Color de frases según ubicación */
 .frase-contador p{
-  color: #ffcee4; /* rosa */
+  padding: 2rem 1rem;              /* espacio interno */
+  text-align: center;
+  font-family: "Garamond", serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+  animation: fadeIn 2s ease forwards;
+
+  background: #ffcee4;             /* 👈 Fondo rosa */
+  color: #fff;                     /* 👈 Texto blanco */
+  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
+  display: inline-block;           /* 👈 ajusta al contenido */
 }
 
 .frase-medio p{
-  color: #fff; /* blanco */
-  background: #ffcee4;
+  padding: 2rem 1rem;              /* espacio interno */
+  text-align: center;
+  font-family: "Garamond", serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+  animation: fadeIn 2s ease forwards;
+
+  background: #ffcee4;             /* 👈 Fondo rosa */
+  color: #fff;                     /* 👈 Texto blanco */
+  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
+  display: inline-block;           /* 👈 ajusta al contenido */
 }
+
 .frase-rsvp p {
-  color: #fff; /* violeta elegante */
-  background: #ffcee4;
+  padding: 2rem 1rem;              /* espacio interno */
+  text-align: center;
+  font-family: "Garamond", serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+  animation: fadeIn 2s ease forwards;
+
+  background: #ffcee4;             /* 👈 Fondo rosa */
+  color: #fff;                     /* 👈 Texto blanco */
+  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
+  display: inline-block;           /* 👈 ajusta al contenido */
 }
+
 
 /* --- BOTÓN DE MÚSICA SIMPLE --- */
 #music-btn {
