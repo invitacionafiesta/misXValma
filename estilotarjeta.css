@@ -408,72 +408,28 @@ header.hero {
   background: url("https://i.pinimg.com/564x/a7/ef/c8/a7efc8d8923402b183e406ded62c15b8.jpg") center center / cover no-repeat !important;
 }
 
-/* ===== FRASES DESTACADAS ===== */
-.frase {
-  padding: 2rem 1rem;              /* espacio interno */
-  text-align: center;
+/* === FRANJA COMPLETA PARA LAS FRASES === */
+section.frase{
+  background: #ffcee4;   /* rosa de la franja */
+  color: #fff;           /* texto blanco */
+  padding: 2rem 1rem;    /* alto de la franja */
+  display: block;        /* importante: bloque, no inline-block */
+  width: 100%;
+  border-radius: 0;      /* sin bordes redondeados en la franja */
+}
+
+/* el <p> sólo formatea texto, sin fondo */
+section.frase p{
+  margin: 0 auto;
+  max-width: 900px;      /* opcional: limita ancho del texto */
   font-family: "Garamond", serif;
   font-size: 1.8rem;
   font-weight: 500;
   line-height: 1.6;
-  margin: 1.5rem 0;
-  animation: fadeIn 2s ease forwards;
-
-  background: #ffcee4;             /* 👈 Fondo rosa */
-  color: #fff;                     /* 👈 Texto blanco */
-  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
-  display: inline-block;           /* 👈 ajusta al contenido */
+  background: transparent;  /* <--- clave */
 }
 
 
-/* Color de frases según ubicación */
-.frase-contador p{
-  padding: 2rem 1rem;              /* espacio interno */
-  text-align: center;
-  font-family: "Garamond", serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  line-height: 1.6;
-  margin: 1.5rem 0;
-  animation: fadeIn 2s ease forwards;
-
-  background: #ffcee4;             /* 👈 Fondo rosa */
-  color: #fff;                     /* 👈 Texto blanco */
-  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
-  display: inline-block;           /* 👈 ajusta al contenido */
-}
-
-.frase-medio p{
-  padding: 2rem 1rem;              /* espacio interno */
-  text-align: center;
-  font-family: "Garamond", serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  line-height: 1.6;
-  margin: 1.5rem 0;
-  animation: fadeIn 2s ease forwards;
-
-  background: #ffcee4;             /* 👈 Fondo rosa */
-  color: #fff;                     /* 👈 Texto blanco */
-  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
-  display: inline-block;           /* 👈 ajusta al contenido */
-}
-
-.frase-rsvp p {
-  padding: 2rem 1rem;              /* espacio interno */
-  text-align: center;
-  font-family: "Garamond", serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  line-height: 1.6;
-  margin: 1.5rem 0;
-  animation: fadeIn 2s ease forwards;
-
-  background: #ffcee4;             /* 👈 Fondo rosa */
-  color: #fff;                     /* 👈 Texto blanco */
-  border-radius: 12px;             /* 👈 Bordes redondeados (opcional) */
-  display: inline-block;           /* 👈 ajusta al contenido */
-}
 
 
 /* --- BOTÓN DE MÚSICA SIMPLE --- */
