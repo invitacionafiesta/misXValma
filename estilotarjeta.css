@@ -432,3 +432,23 @@ header.hero {
   background: #ffcee4;
 }
 
+/* Botón play/pause simple */
+#playpause-btn {
+  background: #ffcee4;       /* rosa suave */
+  color: white;              /* texto blanco */
+  border: none;
+  border-radius: 50%;        /* forma circular */
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;         /* tamaño del icono */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+}
+
+#playpause-btn:hover {
+  background: #f8a6c8;       /* rosa un poco más fuerte al pasar */
+}
