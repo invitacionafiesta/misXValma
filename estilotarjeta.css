@@ -432,24 +432,27 @@ header.hero {
   background: #ffcee4;
 }
 
-/* reset del botón viejo y estilo rosa simple */
+/* --- BOTÓN DE MÚSICA SIMPLE --- */
 #music-btn {
-  all: unset;                            /* borra estilos heredados */
+  display: none;                /* oculto al inicio */
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #ffcee4 !important;        /* rosa */
-  color: #fff !important;
-  display: flex;                          /* para centrar el icono */
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
+  background: #ffb6c1;          /* rosa claro */
+  color: #fff;                  /* texto blanco */
+  border: none;                 /* sin borde */
+  border-radius: 50%;           /* forma circular */
+  width: 60px;
+  height: 60px;
+  font-size: 1.2rem;            /* tamaño del símbolo */
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;             /* fino */
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0,0,0,.15);
-  z-index: 9999;
+  box-shadow: none !important;  /* 🔥 sin sombras */
+  outline: none !important;     /* 🔥 sin contorno */
+  transition: background 0.3s ease;
 }
 
-#music-btn:hover { background: #f7b6d2 !important; }
+#music-btn:hover {
+  background: #ff8fab;          /* rosa un poquito más oscuro al pasar */
+}
