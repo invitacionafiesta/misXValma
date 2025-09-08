@@ -439,7 +439,7 @@ header.hero {
   bottom: 20px;
   right: 20px;
   background: #ffb6c1;          /* rosa claro */
-  color: #fff;                  /* texto blanco */
+  color: #ffb6c1;                  /* texto blanco */
   border: none;                 /* sin borde */
   border-radius: 50%;           /* forma circular */
   width: 60px;
