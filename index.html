@@ -136,7 +136,7 @@
     <source src="cancion ariana grande.mp3" type="audio/mpeg">
     Tu navegador no soporta audio HTML5.
   </audio>
-  <button id="music-btn" style="display:none;">▶️</button>
+  <button id="music-btn" style="display:none;">▶</button>
 
 
    
@@ -154,10 +154,10 @@
     const go = () => {
       try { music.currentTime = seconds; } catch (e) { /* iOS puede tardar un toque */ }
       music.play()
-        .then(() => { btn.textContent = "⏸️"; })
+        .then(() => { btn.textContent = "⏸"; })
         .catch(err => {
           console.log("No se pudo reproducir automáticamente:", err);
-          btn.textContent = "▶️";
+          btn.textContent = "▶";
         });
     };
 
