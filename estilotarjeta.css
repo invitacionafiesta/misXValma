@@ -104,26 +104,26 @@ section {
 
 /* 3° sección: BLANCO (texto rosa) */
 .dresscode {
-  background: #ffe6f1;
+  background: #fff;
 }
 .dresscode h3, .dresscode p {
-  color: #fff;
+  color: #ffe6f1;
 }
 
 /* 4° sección: ROSA (texto blanco) */
 .regalos {
-  background: #fff;
+  background: #ffe6f1;
 }
 .regalos h3, .regalos p {
-  color: #ffe6f1;
+  color: #fff;
 }
 
 /* 5° sección: BLANCO (texto rosa) */
 .rsvp {
-  background: #ffe6f1;
+  background: #fff;
 }
 .rsvp h3, .rsvp p {
-  color: #fff;
+  color: #ffe6f1;
 }
 
 
@@ -410,7 +410,7 @@ header.hero {
 
 /* === FRANJA COMPLETA PARA LAS FRASES === */
 section.frase{
-  background: #ffcee4;   /* rosa de la franja */
+  background: #ffe6f1;   /* rosa de la franja */
   color: #fff;           /* texto blanco */
   padding: 2rem 1rem;    /* alto de la franja */
   display: block;        /* importante: bloque, no inline-block */
@@ -439,8 +439,8 @@ section.frase p{
   bottom: 20px;
   right: 20px;
   display: flex; 
-  background: #ffcee4;          /* rosa claro */
-  color:#ffcee4;                  /* texto blanco */
+  background: #ffe6f1;          /* rosa claro */
+  color:#ffffff;                  /* texto blanco */
   border: none;                 /* sin borde */
   border-radius: 50%;           /* forma circular */
   width: 60px;
@@ -455,5 +455,5 @@ section.frase p{
 }
 
 #music-btn:hover {
-  background: #ffcee4;          /* rosa un poquito más oscuro al pasar */
+  background: #ffe6f1;          /* rosa un poquito más oscuro al pasar */
 }
