@@ -85,7 +85,9 @@ section {
   padding: 3rem 1rem;
   margin-bottom: 1.5rem; /* separa secciones */
 }
-
+.contador h3, .contador p{
+  color: #ffe6f1
+}
 /* 1° sección: BLANCO (texto rosa) */
 .cuando {
   background: #ffe6f1; 
@@ -152,8 +154,8 @@ h3 {
 
 /* -------- FOOTER -------- */
 footer {
-  background: #ffe6f1;
-  color: #fff;
+  background: #fff;
+  color: #ffe6f1;
   padding: 6rem 1rem;
   text-align: center;
 }
@@ -456,4 +458,9 @@ section.frase p{
 
 #music-btn:hover {
   background: #fff;          /* rosa un poquito más oscuro al pasar */
+}
+
+section p{
+  font-size:1.15rem;    /* subilo a 1.25 si querés aún más */
+  line-height:1.85;
 }
