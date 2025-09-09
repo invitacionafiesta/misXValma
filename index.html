@@ -185,10 +185,10 @@
   // Botón flotante Play/Pause
   btn.addEventListener("click", () => {
     if (music.paused) {
-      music.play().then(() => { btn.textContent = "⏸"; });
+      music.play().then(() => { btn.textContent = "\u25B6\uFE0E"; });
     } else {
       music.pause();
-      btn.textContent = "▶";
+      btn.textContent = "\u23F8\uFE0E";
     }
   });
 
