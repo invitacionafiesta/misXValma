@@ -119,6 +119,12 @@ section {
 .regalos h3, .regalos p {
   color: #fff;
 }
+/* Alias en la sección Regalos */
+.regalos strong {
+  font-size: 2rem;       /* 👈 más grande, ajustá a gusto */
+  color: #fff;        /* 👈 rosa para destacar */
+  font-weight: 700;      /* bien marcado */
+}
 
 /* 5° sección: BLANCO (texto rosa) */
 .rsvp {
