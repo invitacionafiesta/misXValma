@@ -497,9 +497,8 @@ section p{
 }
 
 /* Colores oficiales */
-.fab-btn.whatsapp{ background:#25D366; }
-.fab-btn.instagram{
-  background: conic-gradient(from 210deg, #feda77, #f58529, #dd2a7b, #8134af, #515bd4, #feda77);
+.fab-btn.whatsapp{ background:#ffcee4; }
+.fab-btn.instagram{ background:#ffcee4;
 }
 
 /* Iconos blancos, nítidos */
