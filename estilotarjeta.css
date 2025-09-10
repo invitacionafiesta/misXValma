@@ -86,11 +86,11 @@ section {
   margin-bottom: 1.5rem; /* separa secciones */
 }
 .contador h3, .contador p{
-  color: #ffe6f1
+  color: #ffcee4
 }
 /* 1° sección: BLANCO (texto rosa) */
 .cuando {
-  background: #ffe6f1; 
+  background: #ffcee4; 
 }
 .cuando h3, .cuando p {
   color: #fff;
@@ -101,7 +101,7 @@ section {
   background: #fff;
 }
 .donde h3, .donde p {
-  color: #ffe6f1;
+  color: #ffcee4;
 }
 
 /* 3° sección: BLANCO (texto rosa) */
@@ -109,12 +109,12 @@ section {
   background: #fff;
 }
 .dresscode h3, .dresscode p {
-  color: #ffe6f1;
+  color: #ffcee4;
 }
 
 /* 4° sección: ROSA (texto blanco) */
 .regalos {
-  background: #ffe6f1;
+  background: #ffcee4;
 }
 .regalos h3, .regalos p {
   color: #fff;
@@ -131,7 +131,7 @@ section {
   background: #fff;
 }
 .rsvp h3, .rsvp p {
-  color: #ffe6f1;
+  color: #ffcee4;
 }
 
 
@@ -155,13 +155,13 @@ h3 {
 }
 
 .btn:hover {
-  background: #ffe6f1;
+  background: #ffcee4;
 }
 
 /* -------- FOOTER -------- */
 footer {
   background: #fff;
-  color: #ffe6f1;
+  color: #ffcee4;
   padding: 4rem 1rem;
   text-align: center;
 }
@@ -179,7 +179,7 @@ footer p {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #ffe6f1;
+  background: #ffcee4;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -193,7 +193,7 @@ footer p {
 }
 
 .music-btn:hover {
-  background: #ffe6f1;
+  background: #ffcee4;
 }
 
 
@@ -235,7 +235,7 @@ footer p {
   animation: fadeIn 2s ease forwards;
   animation-delay: 1s;
   text-shadow: 0 0 8px;
-  color: #ffe6f1;         /* rosa suave */
+  color: #ffcee4;         /* rosa suave */
   text-transform: uppercase; /* 👈 mayúsculas */
   letter-spacing: 0.12em;    /* 👈 espaciado */
 }
@@ -248,7 +248,7 @@ footer p {
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #ffe6f1;        /* rosa suave */
+  color: #ffcee4;        /* rosa suave */
   margin-bottom: 1rem;
 }
 
@@ -308,7 +308,7 @@ footer p {
 
 #entrar-btn {
   font-family: "Monserrat", sans-serif !important;
-  background: #f1d1df !important;  /* fondo rosa */
+  background: #ffcee4 !important;  /* fondo rosa */
   color: #fff !important;       /* texto violeta */
   font-size: 1.2rem;
   border-radius: 2rem;  /* más redondeado */
@@ -418,7 +418,7 @@ header.hero {
 
 /* === FRANJA COMPLETA PARA LAS FRASES === */
 section.frase{
-  background: #ffe6f1;   /* rosa de la franja */
+  background: #ffcee4;   /* rosa de la franja */
   color: #fff;           /* texto blanco */
   padding: 2rem 1rem;    /* alto de la franja */
   display: block;        /* importante: bloque, no inline-block */
@@ -447,8 +447,8 @@ section.frase p{
   bottom: 20px;
   right: 20px;
   display: flex; 
-  background: #ffe6f1;          /* rosa claro */
-  color:#ffe6f1;                  /* texto blanco */
+  background: #ffcee4;          /* rosa claro */
+  color:#ffcee4;                  /* texto blanco */
   border: none;                 /* sin borde */
   border-radius: 50%;           /* forma circular */
   width: 60px;
