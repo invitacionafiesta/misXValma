@@ -130,17 +130,6 @@
      <p>Tu presencia es muy importante para mi, espero verte ahí.</p>
     </section>
 
-
-    <!-- FAB social -->
-    <div id="social-fab" class="social-fab" style="display:none;">
-     <a class="fab-btn whatsapp" href="https://wa.me/5493413546908" target="_blank" rel="noopener" aria-label="WhatsApp">
-       <i class="fa-brands fa-whatsapp"></i>
-     </a>
-     <a class="fab-btn instagram" href="https://instagram.com/aguskronem" target="_blank" rel="noopener" aria-label="Instagram">
-       <i class="fa-brands fa-instagram"></i>
-     </a>
-    </div>
-
    <footer>
      <p>Con cariño, <span class="alma">Alma</span></p>
    </footer>
@@ -164,8 +153,6 @@
   const entrarBtn  = document.getElementById("entrar-btn");
   const music      = document.getElementById("bg-music");
   const btn        = document.getElementById("music-btn");
-  const socialFab = document.getElementById("social-fab");
-
   // Función segura para reproducir desde un segundo específico
    function playFrom(seconds) {
     const go = () => {
@@ -194,7 +181,6 @@
     portada.style.display = "none";
     invitacion.style.display = "block";
     btn.style.display = "flex";
-    socialFab.style.display = "flex"; 
     playFrom(29); // <<< CAMBIÁ ACÁ el segundo de inicio si querés
   });
 
