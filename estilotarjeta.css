@@ -470,3 +470,45 @@ section p{
   font-size:1.15rem;    /* subilo a 1.25 si querés aún más */
   line-height:1.85;
 }
+
+/* --- FAB social mínimo, no invasivo --- */
+.social-fab{
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;           /* debajo o igual que el de música (1000) */
+}
+
+.social-fab a{
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffcee4;     /* tu rosa */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: none;
+  opacity: 0.85;           /* bajita para no “gritar” */
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.social-fab a:hover{
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.social-fab svg{
+  width: 22px;
+  height: 22px;
+  fill: #fff;              /* ícono blanco sobre rosa */
+}
+
+/* En móvil, un toque más chicos */
+@media (max-width: 600px){
+  .social-fab a{ width: 40px; height: 40px; }
+  .social-fab svg{ width: 20px; height: 20px; }
+}
