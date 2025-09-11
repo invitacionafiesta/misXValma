@@ -471,3 +471,42 @@ section p{
   line-height:1.85;
 }
 
+/* ---- Mini footer de contacto ---- */
+.mini-contact{
+  background:#fff;                 /* mismo fondo que tu footer */
+  color:#ffcee4;                   /* rosa de tu paleta */
+  border-top:1px solid rgba(255,206,228,.6);
+  padding:.6rem .8rem;             /* bajito/fino */
+  text-align:center;
+  font-size:.9rem;                 /* texto pequeño */
+  line-height:1.4;
+}
+
+.mini-contact .links{
+  display:inline-flex;
+  align-items:center;
+  gap:.75rem;
+  margin-left:.5rem;
+}
+
+.mini-contact a{
+  color:#ff69b4;                   /* rosa un toque más fuerte para links */
+  text-decoration:none;
+  transition:opacity .2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+}
+
+.mini-contact a:hover{ opacity:.8; }
+
+.mini-contact i{
+  font-size:.95rem;                /* iconito chico */
+  line-height:1;
+}
+
+/* más chico aún en móvil */
+@media (max-width:600px){
+  .mini-contact{ font-size:.85rem; }
+  .mini-contact i{ font-size:.9rem; }
+}
