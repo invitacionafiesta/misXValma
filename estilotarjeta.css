@@ -471,15 +471,20 @@ section p{
   line-height:1.85;
 }
 
-/* ---- Mini footer de contacto ---- */
+/* ---- Mini footer fijo debajo del music player ---- */
 .mini-contact{
-  background:#fff;                 /* mismo fondo que tu footer */
-  color:#ffcee4;                   /* rosa de tu paleta */
+  position: fixed;
+  bottom: 0;               /* se pega al borde inferior */
+  left: 0;
+  width: 100%;
+  background:#fff;
+  color:#ffcee4;
   border-top:1px solid rgba(255,206,228,.6);
-  padding:.6rem .8rem;             /* bajito/fino */
+  padding:.4rem .8rem;     /* más fino */
   text-align:center;
-  font-size:.9rem;                 /* texto pequeño */
+  font-size:.9rem;
   line-height:1.4;
+  z-index: 9999;           /* sobre todo, pero debajo del botón de música si le das 10000 */
 }
 
 .mini-contact .links{
@@ -490,7 +495,7 @@ section p{
 }
 
 .mini-contact a{
-  color:#ff69b4;                   /* rosa un toque más fuerte para links */
+  color:#ff69b4;
   text-decoration:none;
   transition:opacity .2s ease;
   display:inline-flex;
@@ -501,12 +506,12 @@ section p{
 .mini-contact a:hover{ opacity:.8; }
 
 .mini-contact i{
-  font-size:.95rem;                /* iconito chico */
+  font-size:.95rem;
   line-height:1;
 }
 
 /* más chico aún en móvil */
 @media (max-width:600px){
-  .mini-contact{ font-size:.85rem; }
-  .mini-contact i{ font-size:.9rem; }
+  .mini-contact{ font-size:.8rem; }
+  .mini-contact i{ font-size:.85rem; }
 }
