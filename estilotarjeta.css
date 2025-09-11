@@ -437,6 +437,10 @@ section.frase p{
   background: transparent;  /* <--- clave */
 }
 
+.frase-medio p {
+  font-size: 3rem;   /* corazones más grandes */
+  letter-spacing: 0.5rem; /* espacio entre ellos */
+}
 
 
 
