@@ -438,7 +438,7 @@ section.frase p{
 }
 
 .frase-medio p {
-  font-size: 6rem;   /* corazones más grandes */
+  font-size: 10rem;   /* corazones más grandes */
   letter-spacing: 0.5rem; /* espacio entre ellos */
 }
 
