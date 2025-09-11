@@ -442,6 +442,11 @@ section.frase p{
   letter-spacing: 0.5rem; /* espacio entre ellos */
 }
 
+.frase-rsvp p {
+  font-size: 2rem;  /* frase RSVP más grande */
+  font-weight: 600;
+  letter-spacing: 0.1rem; /* un poquito de espacio */
+}
 
 
 /* --- BOTÓN DE MÚSICA SIMPLE --- */
