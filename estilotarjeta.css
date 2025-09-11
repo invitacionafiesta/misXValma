@@ -443,7 +443,7 @@ section.frase p{
 }
 
 .frase-rsvp p {
-  font-size: 20rem;  /* frase RSVP más grande */
+  font-size: 7rem !important;  /* frase RSVP más grande */
   font-weight: 600;
 }
 
