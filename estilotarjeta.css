@@ -474,7 +474,7 @@ section p{
 /* ---- Mini footer fijo debajo del music player ---- */
 .mini-contact{
   background:#fff;
-  color:#ff69b4;
+  color:#ffcee4;
   padding:.4rem .8rem;     /* más fino */
   text-align:center;
   font-size:.9rem;
@@ -490,7 +490,7 @@ section p{
 }
 
 .mini-contact a{
-  color:#ff69b4;
+  color:#ffcee4;
   text-decoration:none;
   transition:opacity .2s ease;
   display:inline-flex;
