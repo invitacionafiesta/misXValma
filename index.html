@@ -128,110 +128,139 @@
   <!-- Botón música (controla Web Audio) -->
   <button id="music-btn">▶</button>
 
-  <script>
-    // ====== Web Audio API (sin <audio>) ======
-    const START_AT = 29; // segundo de inicio
-    const AUDIO_URL = "cancion%20ariana%20grande.mp3";
+<script>
+  /************* CONFIG *************/
+  const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // ruta del MP3
 
-    let AudioCtx, buffer = null, source = null;
-    let isPlaying = false, offset = 0, startedAt = 0;
+  /************* ESTADO WEB AUDIO *************/
+  let AudioCtx, buffer = null, source = null;
+  let isPlaying = false, offset = 0, startedAt = 0;
 
-    async function loadAudioBuffer() {
-      if (buffer) return buffer;
-      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const res = await fetch(AUDIO_URL);
-      const arr = await res.arrayBuffer();
-      buffer = await new Promise((resolve, reject) => {
-        // decodeAudioData puede ser callback-based en algunos navegadores
-        const done = (buf) => resolve(buf);
-        const fail = (err) => reject(err);
-        const decoder = AudioCtx.decodeAudioData(arr, done, fail);
-        if (decoder && decoder.then) decoder.then(resolve).catch(reject);
-      });
-      return buffer;
-    }
+  async function loadAudioBuffer() {
+    if (buffer) return buffer;
+    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const res = await fetch(AUDIO_URL);
+    const arr = await res.arrayBuffer();
 
-    function startFrom(sec) {
-      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (AudioCtx.state === "suspended") AudioCtx.resume();
-
-      // Detener anterior si existía
-      if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
-
-      source = AudioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(AudioCtx.destination);
-
-      offset = sec;
-      startedAt = AudioCtx.currentTime - offset;
-      source.start(0, offset);
-
-      isPlaying = true;
-      musicBtn.textContent = "⏸︎";
-      source.onended = () => {
-        isPlaying = false;
-        musicBtn.textContent = "▶";
-        offset = 0;
-        source = null;
-      };
-    }
-
-    function togglePlayPause() {
-      if (!AudioCtx || !buffer) return;
-      if (isPlaying) {
-        offset = AudioCtx.currentTime - startedAt;
-        try { source.stop(); } catch(e){}
-        if (source) source.disconnect();
-        source = null;
-        isPlaying = false;
-        musicBtn.textContent = "▶";
-      } else {
-        startFrom(offset);
-      }
-    }
-
-    // ====== UI existente ======
-    const portada    = document.getElementById("portada");
-    const invitacion = document.getElementById("invitacion");
-    const entrarBtn  = document.getElementById("entrar-btn");
-    const musicBtn   = document.getElementById("music-btn");
-
-    entrarBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      portada.style.display = "none";
-      invitacion.style.display = "block";
-      musicBtn.style.display = "flex";
-
-      try {
-        await loadAudioBuffer();
-        startFrom(START_AT);
-      } catch (err) {
-        console.error("No se pudo cargar/reproducir el audio:", err);
-        musicBtn.textContent = "▶";
-      }
+    // decodeAudioData puede ser callback o promesa según navegador
+    buffer = await new Promise((resolve, reject) => {
+      const onOk = (buf) => resolve(buf);
+      const onErr = (err) => reject(err);
+      const p = AudioCtx.decodeAudioData(arr, onOk, onErr);
+      if (p && p.then) p.then(resolve).catch(reject);
     });
+    return buffer;
+  }
 
-    musicBtn.addEventListener("click", togglePlayPause);
+  function startFrom(sec) {
+    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (AudioCtx.state === "suspended") AudioCtx.resume();
 
-    // ====== Contador ======
-    const countdown = document.getElementById("countdown");
-    const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
-    setInterval(() => {
-      const now = Date.now();
-      const distance = targetDate - now;
-      const days = Math.floor(distance / (1000*60*60*24));
-      const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
-      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
-      const seconds = Math.floor((distance % (1000*60)) / 1000);
-      if (countdown) {
-        countdown.innerHTML = `
-          <div><strong>${days}</strong><span>días</span></div>
-          <div><strong>${hours}</strong><span>horas</span></div>
-          <div><strong>${minutes}</strong><span>minutos</span></div>
-          <div><strong>${seconds}</strong><span>segundos</span></div>
-        `;
+    // limpiar fuente previa si existiera
+    if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
+
+    source = AudioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(AudioCtx.destination);
+
+    // clamp por si se excede del final
+    const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
+
+    offset = startSec;
+    startedAt = AudioCtx.currentTime - offset;
+    source.start(0, offset);
+
+    isPlaying = true;
+    musicBtn.textContent = "⏸︎";
+
+    // Solo resetear cuando termine naturalmente (no al pausar)
+    source.onended = () => {
+      isPlaying = false;
+      musicBtn.textContent = "▶";
+      offset = 0;
+      source = null;
+    };
+  }
+
+  function togglePlayPause() {
+    if (!AudioCtx || !buffer) return;
+
+    if (isPlaying) {
+      // PAUSA: preservar el punto actual
+      offset = AudioCtx.currentTime - startedAt;
+
+      // Evitar que onended dispare el reset al pausar
+      if (source) {
+        source.onended = null;
+        try { source.stop(); } catch(e){}
+        source.disconnect();
+        source = null;
       }
-    }, 1000);
-  </script>
+
+      isPlaying = false;
+      musicBtn.textContent = "▶";
+    } else {
+      // PLAY: reanudar desde el offset guardado
+      startFrom(offset);
+    }
+  }
+
+  /************* UI / ELEMENTOS *************/
+  const portada    = document.getElementById("portada");
+  const invitacion = document.getElementById("invitacion");
+  const entrarBtn  = document.getElementById("entrar-btn");
+  const musicBtn   = document.getElementById("music-btn");
+  const countdown  = document.getElementById("countdown");
+
+  // Al tocar "Entrar": mostrar invitación, botón música y arrancar canción en START_AT
+  entrarBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    portada.style.display = "none";
+    invitacion.style.display = "block";
+    musicBtn.style.display = "flex";
+
+    try {
+      await loadAudioBuffer();
+      startFrom(START_AT);
+    } catch (err) {
+      console.error("No se pudo cargar/reproducir el audio:", err);
+      musicBtn.textContent = "▶";
+    }
+  });
+
+  // Botón Play/Pause
+  musicBtn.addEventListener("click", togglePlayPause);
+
+  // (Opcional) Reanudar contexto al volver de background en iOS/Android
+  document.addEventListener("visibilitychange", () => {
+    if (!AudioCtx) return;
+    if (document.visibilityState === "visible" && AudioCtx.state === "suspended") {
+      AudioCtx.resume();
+    }
+  });
+
+  /************* CONTADOR *************/
+  const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
+  setInterval(() => {
+    const now = Date.now();
+    const distance = targetDate - now;
+
+    const days = Math.floor(distance / (1000*60*60*24));
+    const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((distance % (1000*60)) / 1000);
+
+    if (countdown) {
+      countdown.innerHTML = `
+        <div><strong>${days}</strong><span>días</span></div>
+        <div><strong>${hours}</strong><span>horas</span></div>
+        <div><strong>${minutes}</strong><span>minutos</span></div>
+        <div><strong>${seconds}</strong><span>segundos</span></div>
+      `;
+    }
+  }, 1000);
+</script>
+
 </body>
 </html>
