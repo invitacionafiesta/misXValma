@@ -4,6 +4,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
   <title>Invitación Mis XV - Alma</title>
 
   <!-- CSS principal -->
@@ -162,33 +164,40 @@
    const PLAY_ICON  = '\u25B6\uFE0E'; // ▶ en modo texto
    const PAUSE_ICON = '\u23F8\uFE0E'; // ⏸ en modo texto
 
+  
   function startFrom(sec) {
-    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (AudioCtx.state === "suspended") AudioCtx.resume();
+  if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (AudioCtx.state === "suspended") AudioCtx.resume();
 
-    // limpiar fuente previa
-    if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
+  // limpiar fuente previa
+  if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
 
-    source = AudioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(AudioCtx.destination);
+  source = AudioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(AudioCtx.destination);
 
-    const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
-    offset = startSec;
-    startedAt = AudioCtx.currentTime - offset;
-    source.start(0, offset);
+  const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
 
-    isPlaying = true;
-    musicBtn.textContent = "\u23F8\uFE0E";
+  // 👇 pequeño delay mejora Android (evita que empiece en 0)
+  const when = AudioCtx.currentTime + 0.03; // 30 ms; si hace falta probá 0.05
 
-    source.onended = () => {
-      // solo se ejecuta si llegó al final naturalmente
-      isPlaying = false;
-      musicBtn.textContent = "\u25B6\uFE0E";
-      offset = 0;
-      source = null;
-    };
-  }
+  offset    = startSec;
+  startedAt = when - offset;     // clave para que pause/resume calcule bien
+  source.start(when, offset);
+
+  isPlaying = true;
+  musicBtn.textContent = "\u23F8\uFE0E"; // ⏸︎
+
+  source.onended = () => {
+    // sólo si terminó naturalmente (no por pausa manual)
+    if (!isPlaying) return;
+    isPlaying = false;
+    musicBtn.textContent = "\u25B6\uFE0E"; // ▶︎
+    offset = 0;
+    source = null;
+  };
+}
+
 
   function togglePlayPause() {
     if (!AudioCtx || !buffer) return;

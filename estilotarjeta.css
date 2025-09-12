@@ -470,32 +470,6 @@ section.frase p{
 }
 
 
-/* --- BOTÓN DE MÚSICA SIMPLE --- */
-#music-btn {
-  display: none;                /* oculto al inicio */
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex; 
-  background: #ffcee4;          /* rosa claro */
-  color:#ffcee4;                  /* texto blanco */
-  border: none;                 /* sin borde */
-  border-radius: 50%;           /* forma circular */
-  width: 60px;
-  height: 60px;
-  font-size: 1.2rem;            /* tamaño del símbolo */
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;             /* fino */
-  cursor: pointer;
-  box-shadow: none !important;  /* 🔥 sin sombras */
-  outline: none !important;     /* 🔥 sin contorno */
-  transition: background 0.3s ease;
-}
-
-#music-btn:hover {
-  background: #fff;          /* rosa un poquito más oscuro al pasar */
-}
-
 section p{
   font-size:1.35rem;    /* subilo a 1.25 si querés aún más */
   line-height:1.85;
@@ -546,4 +520,28 @@ audio {
   height: 0;
   width: 0;
   opacity: 0;
+}
+
+:root { color-scheme: light; }                 /* di al navegador: sólo esquema claro */
+html, body { background-color:#fff !important; }
+
+/* Si el SO está en oscuro, mantené igual los fondos y textos de tus secciones */
+@media (prefers-color-scheme: dark) {
+  html, body,
+  .hero, section, footer,
+  .contador, .donde, .dresscode, .rsvp, .regalos, .cuando {
+    background-color: #fff !important;
+    color: #333 !important;
+  }
+  /* preserva tus secciones rosas */
+  .regalos, .cuando, section.frase {
+    background-color: #ffcee4 !important;
+    color: #fff !important;
+  }
+  .donde h3, .donde p,
+  .dresscode h3, .dresscode p,
+  .rsvp h3, .rsvp p,
+  .contador h3, .contador p {
+    color: #ffcee4 !important;
+  }
 }
