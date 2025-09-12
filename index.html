@@ -133,80 +133,63 @@
 <button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
 
 <script>
-  // 👇 pegá esto cerca del inicio de tu script, después de declarar AUDIO_URL y variables
- window.addEventListener("load", async () => {
-  try {
-    // crear contexto y decodificar SIN reproducir (no viola políticas)
-    AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // dispara el prefetch si aún no corrió
-    if (!audioArrayBufferPromise) {
-      audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
-        .then(r => r.ok ? r.arrayBuffer() : Promise.reject(r.status));
-    }
-    await loadAudioBuffer(); // decodifica el MP3 anticipadamente
-  } catch (e) {
-    console.warn("Prewarm falló (seguimos con el flujo normal):", e);
-  }
- });
-
   /************* CONFIG *************/
   const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
-  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // nombre EXACTO del mp3 (ruta incluida si aplica)
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // ruta/nombre EXACTO
 
-  /************* PREFETCH DEL MP3 (más rápido) *************/
-  // Intentamos descargar el MP3 apenas carga la página. No reproduce; sólo guarda el binario en memoria.
-  let audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
-    .then(r => {
-      if (!r.ok) throw new Error("No se pudo descargar el MP3: " + r.status);
-      return r.arrayBuffer();
-    })
-    .catch(err => {
-      console.warn("Prefetch falló (se descargará al tocar Entrar):", err);
-      return null; // si falla, luego haremos fetch normal
-    });
-
-  /************* ESTADO WEB AUDIO *************/
+  /************* ESTADO *************/
   let AudioCtx, buffer = null, source = null;
   let isPlaying = false, offset = 0, startedAt = 0;
 
-  async function loadAudioBuffer() {
-    if (buffer) return buffer;
-    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  /************* PREFETCH + PREWARM *************/
+  // Descarga anticipada (rápido) y decodificación antes del gesto
+  let audioArrayBufferPromise = null;
 
-    // Usa el prefetch si está, sino descarga ahora
-    let arr = await audioArrayBufferPromise;
-    if (!arr) {
-      const res = await fetch(AUDIO_URL, { cache: "force-cache" });
-      if (!res.ok) throw new Error("No se pudo descargar el MP3: " + res.status);
-      arr = await res.arrayBuffer();
+  async function prewarm() {
+    try {
+      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioArrayBufferPromise) {
+        audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
+          .then(r => {
+            if (!r.ok) throw new Error(r.status);
+            return r.arrayBuffer();
+          })
+          .catch(e => { console.warn("Prefetch falló:", e); return null; });
+      }
+      const arr = await audioArrayBufferPromise;
+      if (!arr) return; // si falló el prefetch, seguimos igual
+
+      if (!buffer) {
+        buffer = await new Promise((resolve, reject) => {
+          const ok = (buf) => resolve(buf);
+          const err = (e)   => reject(e);
+          const p = AudioCtx.decodeAudioData(arr, ok, err);
+          if (p && p.then) p.then(resolve).catch(reject);
+        });
+      }
+    } catch (e) {
+      console.warn("Prewarm falló (seguimos):", e);
     }
-
-    buffer = await new Promise((resolve, reject) => {
-      const ok = (buf) => resolve(buf);
-      const err = (e)   => reject(e);
-      const p = AudioCtx.decodeAudioData(arr, ok, err);
-      if (p && p.then) p.then(resolve).catch(reject);
-    });
-
-    return buffer;
   }
 
-  /************* ICONOS DEL BOTON (SVG = no emoji jamás) *************/
-  const musicBtn = document.getElementById("music-btn");
+  // Prewarm al cargar (no reproduce, solo prepara todo)
+  window.addEventListener("load", prewarm);
 
+  /************* ICONOS (SVG, nunca emoji) *************/
+  const musicBtn = document.getElementById("music-btn");
   function setPlayIcon(){
     musicBtn.innerHTML = `
-      <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path fill="currentColor" d="M8 5v14l11-7-11-7z"></path>
       </svg>`;
   }
   function setPauseIcon(){
     musicBtn.innerHTML = `
-      <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
       </svg>`;
   }
-  setPlayIcon(); // estado inicial
+  setPlayIcon();
 
   /************* REPRODUCCION *************/
   function startFrom(sec) {
@@ -220,21 +203,21 @@
     source.buffer = buffer;
     source.connect(AudioCtx.destination);
 
+    // limitar offset válido
     const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
 
-    // 👇 pequeño delay (30 ms) ayuda a Android a respetar el offset
-    const when = AudioCtx.currentTime + 0.03;
+    // 👇 delay de 60ms: Android respeta mejor el offset (si sigue mal, probá 0.08)
+    const when = AudioCtx.currentTime + 0.06;
 
     offset    = startSec;
-    startedAt = when - offset;     // clave para que pause/resume calcule bien
+    startedAt = when - offset;
     source.start(when, offset);
 
     isPlaying = true;
     setPauseIcon();
 
     source.onended = () => {
-      // sólo si terminó naturalmente (no por pausa manual)
-      if (!isPlaying) return;
+      if (!isPlaying) return; // se pausó manualmente
       isPlaying = false;
       setPlayIcon();
       offset = 0;
@@ -244,12 +227,10 @@
 
   function togglePlayPause() {
     if (!AudioCtx || !buffer) return;
-
     if (isPlaying) {
-      // PAUSA: guardar posición y detener sin disparar onended
       offset = AudioCtx.currentTime - startedAt;
       if (source) {
-        source.onended = null;  // no resetear al pausar
+        source.onended = null;
         try { source.stop(); } catch(e){}
         source.disconnect();
         source = null;
@@ -257,60 +238,37 @@
       isPlaying = false;
       setPlayIcon();
     } else {
-      // PLAY: reanudar desde el offset guardado
       startFrom(offset);
     }
   }
 
-  /************* UI / ELEMENTOS *************/
+  /************* UI / LISTENERS *************/
   const portada    = document.getElementById("portada");
   const invitacion = document.getElementById("invitacion");
   const entrarBtn  = document.getElementById("entrar-btn");
   const countdown  = document.getElementById("countdown");
 
-  // Desbloqueo de iOS extra: si por alguna razón no arrancó, primer toque reintenta
-  let unlockTried = false;
-  async function tryUnlockAndStart() {
-    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (AudioCtx.state === "suspended") await AudioCtx.resume();
-
-    if (!buffer) await loadAudioBuffer();
-    if (!isPlaying) startFrom(START_AT);
-  }
-
   entrarBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     portada.style.display = "none";
     invitacion.style.display = "block";
-    musicBtn.style.display = "flex"; // ahora visible
+    musicBtn.style.display = "flex";
 
     try {
-      // Crear/resumir contexto *dentro del gesto*
       if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (AudioCtx.state === "suspended") await AudioCtx.resume();
 
-      if (!buffer) {
-      // dispara en background; cuando termine, si sigue sin sonar, arrancamos
-      loadAudioBuffer().then(() => {
-        if (!isPlaying) startFrom(START_AT);
-      }).catch(console.error);
-    }
-       if (buffer && !isPlaying) startFrom(START_AT);
-
-
-      await loadAudioBuffer();      // usa el prefetch si ya bajó
-      startFrom(START_AT);
+      // Si el buffer ya está listo por el prewarm: arrancá YA
+      if (buffer) {
+        startFrom(START_AT);
+      } else {
+        // Dispara carga/decodificación en background; al terminar, arranca solo si aún no suena
+        prewarm().then(() => { if (buffer && !isPlaying) startFrom(START_AT); });
+        // Y como “seguro rápido”, intentá arrancar igual (por si decode ya terminó)
+        setTimeout(() => { if (buffer && !isPlaying) startFrom(START_AT); }, 50);
+      }
     } catch (err) {
       console.error("No se pudo iniciar audio en 'Entrar':", err);
-      // Plan B: esperar al primer pointerup para reintentar
-      if (!unlockTried) {
-        unlockTried = true;
-        const onceUnlock = async () => {
-          document.removeEventListener("pointerup", onceUnlock, true);
-          try { await tryUnlockAndStart(); } catch (e2) { console.error(e2); }
-        };
-        document.addEventListener("pointerup", onceUnlock, true);
-      }
       setPlayIcon();
     }
   });
@@ -318,13 +276,34 @@
   // Botón Play/Pause
   musicBtn.addEventListener("click", togglePlayPause);
 
-  // Reanudar si vuelve a foreground (iOS/Android)
+  // Reanuda el contexto si vuelve a foreground
   document.addEventListener("visibilitychange", () => {
     if (!AudioCtx) return;
     if (document.visibilityState === "visible" && AudioCtx.state === "suspended") {
       AudioCtx.resume();
     }
   });
+
+  /************* PRIMER GESTO UNIVERSAL (Plan B) *************/
+  (function addOnceUnlock(){
+    let done = false;
+    const handler = async () => {
+      if (done) return;
+      done = true;
+      try {
+        if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (AudioCtx.state === "suspended") await AudioCtx.resume();
+        if (!buffer) await prewarm();
+        if (!isPlaying && buffer) startFrom(START_AT);
+      } catch(e){ console.warn(e); }
+      ["pointerup","touchend","click","keydown"].forEach(ev =>
+        document.removeEventListener(ev, handler, {capture:true})
+      );
+    };
+    ["pointerup","touchend","click","keydown"].forEach(ev =>
+      document.addEventListener(ev, handler, {capture:true, once:true})
+    );
+  })();
 
   /************* CONTADOR *************/
   const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
@@ -346,23 +325,6 @@
       `;
     }
   }, 1000);
-
-  (function addOnceUnlock(){
-  let done = false;
-  const handler = async () => {
-    if (done) return;
-    done = true;
-    try {
-      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (AudioCtx.state === "suspended") await AudioCtx.resume();
-      if (!buffer) await loadAudioBuffer();
-      if (!isPlaying) startFrom(START_AT);
-    } catch(e){ console.warn(e); }
-    ["pointerup","touchend","click","keydown"].forEach(ev => document.removeEventListener(ev, handler, {capture:true}));
-  };
-  ["pointerup","touchend","click","keydown"].forEach(ev => document.addEventListener(ev, handler, {capture:true, once:true}));
-})();
-
 </script>
 
 
