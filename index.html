@@ -176,12 +176,12 @@
     source.start(0, offset);
 
     isPlaying = true;
-    musicBtn.textContent = "PAUSE_ICON";
+    musicBtn.textContent = "\u23F8\uFE0E";
 
     source.onended = () => {
       // solo se ejecuta si llegó al final naturalmente
       isPlaying = false;
-      musicBtn.textContent = "PLAY_ICON";
+      musicBtn.textContent = "\u25B6\uFE0E";
       offset = 0;
       source = null;
     };
@@ -200,7 +200,7 @@
         source = null;
       }
       isPlaying = false;
-      musicBtn.textContent = "PLAY_ICON";
+      musicBtn.textContent = "\u25B6\uFE0E";
     } else {
       // PLAY: reanudar desde el offset guardado
       startFrom(offset);
@@ -248,7 +248,7 @@
         };
         document.addEventListener("pointerup", onceUnlock, true);
       }
-      musicBtn.textContent = "PLAY_ICON";
+      musicBtn.textContent = "\u25B6\uFE0E";
     }
   });
 
