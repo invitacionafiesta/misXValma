@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preload" as="audio" href="cancion%20ariana%20grande.mp3">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
@@ -131,12 +132,22 @@
   <!-- antes: <button id="music-btn">▶</button> -->
 <button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
 
-
-
 <script>
   /************* CONFIG *************/
   const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
-  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // revisá que el nombre coincida EXACTO
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // nombre EXACTO del mp3 (ruta incluida si aplica)
+
+  /************* PREFETCH DEL MP3 (más rápido) *************/
+  // Intentamos descargar el MP3 apenas carga la página. No reproduce; sólo guarda el binario en memoria.
+  let audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
+    .then(r => {
+      if (!r.ok) throw new Error("No se pudo descargar el MP3: " + r.status);
+      return r.arrayBuffer();
+    })
+    .catch(err => {
+      console.warn("Prefetch falló (se descargará al tocar Entrar):", err);
+      return null; // si falla, luego haremos fetch normal
+    });
 
   /************* ESTADO WEB AUDIO *************/
   let AudioCtx, buffer = null, source = null;
@@ -146,9 +157,13 @@
     if (buffer) return buffer;
     if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    const res = await fetch(AUDIO_URL, { cache: "force-cache" });
-    if (!res.ok) throw new Error("No se pudo descargar el MP3: " + res.status);
-    const arr = await res.arrayBuffer();
+    // Usa el prefetch si está, sino descarga ahora
+    let arr = await audioArrayBufferPromise;
+    if (!arr) {
+      const res = await fetch(AUDIO_URL, { cache: "force-cache" });
+      if (!res.ok) throw new Error("No se pudo descargar el MP3: " + res.status);
+      arr = await res.arrayBuffer();
+    }
 
     buffer = await new Promise((resolve, reject) => {
       const ok = (buf) => resolve(buf);
@@ -160,44 +175,56 @@
     return buffer;
   }
 
-  // Íconos forzados como texto (no emoji)
-   const PLAY_ICON  = '\u25B6\uFE0E'; // ▶ en modo texto
-   const PAUSE_ICON = '\u23F8\uFE0E'; // ⏸ en modo texto
+  /************* ICONOS DEL BOTON (SVG = no emoji jamás) *************/
+  const musicBtn = document.getElementById("music-btn");
 
-  
+  function setPlayIcon(){
+    musicBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+        <path fill="currentColor" d="M8 5v14l11-7-11-7z"></path>
+      </svg>`;
+  }
+  function setPauseIcon(){
+    musicBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+        <path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+      </svg>`;
+  }
+  setPlayIcon(); // estado inicial
+
+  /************* REPRODUCCION *************/
   function startFrom(sec) {
-  if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (AudioCtx.state === "suspended") AudioCtx.resume();
+    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (AudioCtx.state === "suspended") AudioCtx.resume();
 
-  // limpiar fuente previa
-  if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
+    // limpiar fuente previa
+    if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
 
-  source = AudioCtx.createBufferSource();
-  source.buffer = buffer;
-  source.connect(AudioCtx.destination);
+    source = AudioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(AudioCtx.destination);
 
-  const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
+    const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
 
-  // 👇 pequeño delay mejora Android (evita que empiece en 0)
-  const when = AudioCtx.currentTime + 0.03; // 30 ms; si hace falta probá 0.05
+    // 👇 pequeño delay (30 ms) ayuda a Android a respetar el offset
+    const when = AudioCtx.currentTime + 0.03;
 
-  offset    = startSec;
-  startedAt = when - offset;     // clave para que pause/resume calcule bien
-  source.start(when, offset);
+    offset    = startSec;
+    startedAt = when - offset;     // clave para que pause/resume calcule bien
+    source.start(when, offset);
 
-  isPlaying = true;
-  musicBtn.textContent = "\u23F8\uFE0E"; // ⏸︎
+    isPlaying = true;
+    setPauseIcon();
 
-  source.onended = () => {
-    // sólo si terminó naturalmente (no por pausa manual)
-    if (!isPlaying) return;
-    isPlaying = false;
-    musicBtn.textContent = "\u25B6\uFE0E"; // ▶︎
-    offset = 0;
-    source = null;
-  };
-}
-
+    source.onended = () => {
+      // sólo si terminó naturalmente (no por pausa manual)
+      if (!isPlaying) return;
+      isPlaying = false;
+      setPlayIcon();
+      offset = 0;
+      source = null;
+    };
+  }
 
   function togglePlayPause() {
     if (!AudioCtx || !buffer) return;
@@ -206,13 +233,13 @@
       // PAUSA: guardar posición y detener sin disparar onended
       offset = AudioCtx.currentTime - startedAt;
       if (source) {
-        source.onended = null;  // clave para no resetear offset
+        source.onended = null;  // no resetear al pausar
         try { source.stop(); } catch(e){}
         source.disconnect();
         source = null;
       }
       isPlaying = false;
-      musicBtn.textContent = "\u25B6\uFE0E";
+      setPlayIcon();
     } else {
       // PLAY: reanudar desde el offset guardado
       startFrom(offset);
@@ -223,7 +250,6 @@
   const portada    = document.getElementById("portada");
   const invitacion = document.getElementById("invitacion");
   const entrarBtn  = document.getElementById("entrar-btn");
-  const musicBtn = document.getElementById("music-btn");
   const countdown  = document.getElementById("countdown");
 
   // Desbloqueo de iOS extra: si por alguna razón no arrancó, primer toque reintenta
@@ -240,14 +266,14 @@
     e.preventDefault();
     portada.style.display = "none";
     invitacion.style.display = "block";
-    musicBtn.style.display = "flex";
+    musicBtn.style.display = "flex"; // ahora visible
 
     try {
       // Crear/resumir contexto *dentro del gesto*
       AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (AudioCtx.state === "suspended") await AudioCtx.resume();
 
-      await loadAudioBuffer();
+      await loadAudioBuffer();      // usa el prefetch si ya bajó
       startFrom(START_AT);
     } catch (err) {
       console.error("No se pudo iniciar audio en 'Entrar':", err);
@@ -260,7 +286,7 @@
         };
         document.addEventListener("pointerup", onceUnlock, true);
       }
-      musicBtn.textContent = "\u25B6\uFE0E";
+      setPlayIcon();
     }
   });
 
@@ -296,6 +322,9 @@
     }
   }, 1000);
 </script>
+
+
+
 
   
 
