@@ -134,49 +134,23 @@
 
 <script>
   /************* CONFIG *************/
-  const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
-  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // ruta/nombre EXACTO
+  const START_AT = 29;                              // segundo inicial
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // nombre/ruta EXACTOS
 
-  /************* ESTADO *************/
-  let AudioCtx, buffer = null, source = null;
-  let isPlaying = false, offset = 0, startedAt = 0;
+  /************* ELEMENTOS *************/
+  const portada    = document.getElementById("portada");
+  const invitacion = document.getElementById("invitacion");
+  const entrarBtn  = document.getElementById("entrar-btn");
+  const musicBtn   = document.getElementById("music-btn");
+  const countdown  = document.getElementById("countdown");
+  const audioEl    = document.getElementById("bg-music");
 
-  /************* PREFETCH + PREWARM *************/
-  // Descarga anticipada (rápido) y decodificación antes del gesto
-  let audioArrayBufferPromise = null;
-
-  async function prewarm() {
-    try {
-      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (!audioArrayBufferPromise) {
-        audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
-          .then(r => {
-            if (!r.ok) throw new Error(r.status);
-            return r.arrayBuffer();
-          })
-          .catch(e => { console.warn("Prefetch falló:", e); return null; });
-      }
-      const arr = await audioArrayBufferPromise;
-      if (!arr) return; // si falló el prefetch, seguimos igual
-
-      if (!buffer) {
-        buffer = await new Promise((resolve, reject) => {
-          const ok = (buf) => resolve(buf);
-          const err = (e)   => reject(e);
-          const p = AudioCtx.decodeAudioData(arr, ok, err);
-          if (p && p.then) p.then(resolve).catch(reject);
-        });
-      }
-    } catch (e) {
-      console.warn("Prewarm falló (seguimos):", e);
-    }
-  }
-
-  // Prewarm al cargar (no reproduce, solo prepara todo)
-  window.addEventListener("load", prewarm);
+  // Aseguramos src y preload del <audio>
+  audioEl.src = AUDIO_URL;
+  audioEl.preload = "auto";        // ayuda a que esté listo
+  audioEl.playsInline = true;      // iOS
 
   /************* ICONOS (SVG, nunca emoji) *************/
-  const musicBtn = document.getElementById("music-btn");
   function setPlayIcon(){
     musicBtn.innerHTML = `
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -191,63 +165,54 @@
   }
   setPlayIcon();
 
-  /************* REPRODUCCION *************/
-  function startFrom(sec) {
-    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (AudioCtx.state === "suspended") AudioCtx.resume();
-
-    // limpiar fuente previa
-    if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
-
-    source = AudioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(AudioCtx.destination);
-
-    // limitar offset válido
-    const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
-
-    // 👇 delay de 60ms: Android respeta mejor el offset (si sigue mal, probá 0.08)
-    const when = AudioCtx.currentTime + 0.06;
-
-    offset    = startSec;
-    startedAt = when - offset;
-    source.start(when, offset);
-
-    isPlaying = true;
-    setPauseIcon();
-
-    source.onended = () => {
-      if (!isPlaying) return; // se pausó manualmente
-      isPlaying = false;
-      setPlayIcon();
-      offset = 0;
-      source = null;
-    };
+  /************* UTIL: esperar evento 1 vez *************/
+  function once(el, ev){
+    return new Promise(res => {
+      const h = () => { el.removeEventListener(ev, h); res(); };
+      el.addEventListener(ev, h);
+    });
   }
 
-  function togglePlayPause() {
-    if (!AudioCtx || !buffer) return;
-    if (isPlaying) {
-      offset = AudioCtx.currentTime - startedAt;
-      if (source) {
-        source.onended = null;
-        try { source.stop(); } catch(e){}
-        source.disconnect();
-        source = null;
-      }
-      isPlaying = false;
+  /************* REPRODUCIR DESDE X (fiable en Android) *************/
+  async function playFrom(seconds){
+    // 1) Esperar metadata si no está
+    if (audioEl.readyState < 1) { // HAVE_METADATA
+      // Si ya está cargando, esperamos loadedmetadata; si no, forzamos carga
+      const p = once(audioEl, 'loadedmetadata');
+      try { audioEl.load(); } catch(_) {}
+      await p;
+    }
+
+    // 2) Algunos Android necesitan un “doble seek”
+    //    (primero a 0, micro-tick, y luego al segundo deseado)
+    try { audioEl.currentTime = 0; } catch(_) {}
+    await new Promise(r => setTimeout(r, 0)); // micro-delay
+
+    // 3) Intentar ubicar al segundo deseado
+    const target = Math.max(0, Math.min(seconds, (audioEl.duration || seconds) - 0.05));
+    try { audioEl.currentTime = target; } catch(_) {}
+
+    // 4) Esperar el 'seeked' para asegurar que no arranque en 0
+    if (Math.abs((audioEl.currentTime || 0) - target) > 0.25) {
+      await once(audioEl, 'seeked');
+    }
+
+    // 5) Reproducir (debe ejecutarse dentro del gesto de usuario)
+    await audioEl.play();
+    setPauseIcon();
+  }
+
+  /************* TOGGLE PLAY/PAUSE (respeta posición) *************/
+  function togglePlayPause(){
+    if (!audioEl.paused) {
+      audioEl.pause();
       setPlayIcon();
     } else {
-      startFrom(offset);
+      audioEl.play().then(setPauseIcon).catch(console.warn);
     }
   }
 
-  /************* UI / LISTENERS *************/
-  const portada    = document.getElementById("portada");
-  const invitacion = document.getElementById("invitacion");
-  const entrarBtn  = document.getElementById("entrar-btn");
-  const countdown  = document.getElementById("countdown");
-
+  /************* UI LISTENERS *************/
   entrarBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     portada.style.display = "none";
@@ -255,55 +220,23 @@
     musicBtn.style.display = "flex";
 
     try {
-      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (AudioCtx.state === "suspended") await AudioCtx.resume();
-
-      // Si el buffer ya está listo por el prewarm: arrancá YA
-      if (buffer) {
-        startFrom(START_AT);
-      } else {
-        // Dispara carga/decodificación en background; al terminar, arranca solo si aún no suena
-        prewarm().then(() => { if (buffer && !isPlaying) startFrom(START_AT); });
-        // Y como “seguro rápido”, intentá arrancar igual (por si decode ya terminó)
-        setTimeout(() => { if (buffer && !isPlaying) startFrom(START_AT); }, 50);
-      }
+      // Todo esto corre dentro del gesto → no hay bloqueo de autoplay
+      await playFrom(START_AT);
     } catch (err) {
-      console.error("No se pudo iniciar audio en 'Entrar':", err);
+      console.warn("No se pudo iniciar desde START_AT:", err);
+      // Plan B: si falla, mostramos Play para que el usuario toque
       setPlayIcon();
     }
   });
 
-  // Botón Play/Pause
   musicBtn.addEventListener("click", togglePlayPause);
 
-  // Reanuda el contexto si vuelve a foreground
+  // Si la app vuelve al foreground y el SO suspendió audio, reanudar si estaba sonando
   document.addEventListener("visibilitychange", () => {
-    if (!AudioCtx) return;
-    if (document.visibilityState === "visible" && AudioCtx.state === "suspended") {
-      AudioCtx.resume();
+    if (document.visibilityState === "visible" && !audioEl.paused) {
+      audioEl.play().catch(() => {});
     }
   });
-
-  /************* PRIMER GESTO UNIVERSAL (Plan B) *************/
-  (function addOnceUnlock(){
-    let done = false;
-    const handler = async () => {
-      if (done) return;
-      done = true;
-      try {
-        if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (AudioCtx.state === "suspended") await AudioCtx.resume();
-        if (!buffer) await prewarm();
-        if (!isPlaying && buffer) startFrom(START_AT);
-      } catch(e){ console.warn(e); }
-      ["pointerup","touchend","click","keydown"].forEach(ev =>
-        document.removeEventListener(ev, handler, {capture:true})
-      );
-    };
-    ["pointerup","touchend","click","keydown"].forEach(ev =>
-      document.addEventListener(ev, handler, {capture:true, once:true})
-    );
-  })();
 
   /************* CONTADOR *************/
   const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
@@ -311,8 +244,8 @@
     const now = Date.now();
     const distance = targetDate - now;
 
-    const days = Math.floor(distance / (1000*60*60*24));
-    const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const days    = Math.floor(distance / (1000*60*60*24));
+    const hours   = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
     const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
     const seconds = Math.floor((distance % (1000*60)) / 1000);
 
@@ -326,6 +259,7 @@
     }
   }, 1000);
 </script>
+
 
 
 
