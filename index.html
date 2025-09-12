@@ -132,164 +132,158 @@
   <!-- antes: <button id="music-btn">▶</button> -->
 <button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
 
-<script>
-/* ====== CONFIG ====== */
-const START_AT  = 29;                                   // segundo inicial
+ <script>
+/* ================== CONFIG ================== */
+const START_AT  = 29;                                   // segundo inicial deseado
 const AUDIO_URL = "cancion%20ariana%20grande.mp3";      // ruta EXACTA del mp3
 
-/* ====== ELEMENTOS (con defensas) ====== */
+/* ================== ELEMENTOS (con defensas) ================== */
 const $ = (id) => document.getElementById(id);
 const portada    = $("portada");
 const invitacion = $("invitacion");
 const entrarBtn  = $("entrar-btn");
 const musicBtn   = $("music-btn");
 const countdown  = $("countdown");
-const audioEl    = $("bg-music");
 
-/* Si falta algo crítico, no bloqueamos la entrada */
+/* ================== Portada / Mostrar invitación ================== */
+/* Si faltara algo crítico, no bloqueamos la entrada */
 function safeShowInvitation() {
   if (portada)    portada.style.display = "none";
   if (invitacion) invitacion.style.display = "block";
-  if (musicBtn)   { musicBtn.style.display = "flex"; setPlayIcon(); }
 }
 
-/* ====== Iconos (SVG: no emoji) ====== */
+/* ================== AUDIO ================== */
+/* Creamos (o capturamos) el <audio> con defensas y flags para iOS */
+let audioEl = document.getElementById("bg-music");
+if (!audioEl) {
+  audioEl = document.createElement("audio");
+  audioEl.id = "bg-music";
+  document.body.appendChild(audioEl);
+}
+audioEl.src = AUDIO_URL;
+audioEl.preload = "auto";
+audioEl.setAttribute("playsinline", "");         // iOS
+audioEl.setAttribute("webkit-playsinline", "");  // iOS Safari viejo
+audioEl.crossOrigin = "anonymous";               // por si el servidor manda CORS correcto
+
+/* ================== ICONOS (SVG) ================== */
 function setPlayIcon(){
   if (!musicBtn) return;
   musicBtn.innerHTML = `
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path fill="currentColor" d="M8 5v14l11-7-11-7z"></path>
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5v14l11-7z"></path>
     </svg>`;
+  musicBtn.setAttribute("aria-label","Reproducir");
 }
 function setPauseIcon(){
   if (!musicBtn) return;
   musicBtn.innerHTML = `
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
     </svg>`;
+  musicBtn.setAttribute("aria-label","Pausar");
 }
-setPlayIcon();
+function showMusicBtn(){
+  if (!musicBtn) return;
+  musicBtn.style.display = "flex";
+  musicBtn.style.alignItems = "center";
+  musicBtn.style.justifyContent = "center";
+}
 
-/* ====== Utilidades ====== */
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-function once(el, ev, timeoutMs=1200){
-  return new Promise((resolve) => {
-    let done = false;
-    const on = () => { if (!done){ done=true; clearTimeout(to); el.removeEventListener(ev, on); resolve(); } };
-    const to = setTimeout(on, timeoutMs);
-    el.addEventListener(ev, on);
+/* ================== SEEK ROBUSTO (iOS-safe) ================== */
+function waitSeekable(aud, timeoutMs = 4000) {
+  return new Promise((resolve, reject) => {
+    const start = performance.now();
+
+    const isSeekable = () => {
+      try {
+        const len = aud.seekable ? aud.seekable.length : 0;
+        return len && isFinite(aud.seekable.end(len - 1));
+      } catch { return false; }
+    };
+
+    if (isSeekable()) return resolve();
+
+    const onMeta = () => { if (isSeekable()) cleanup(true); };
+    const onCan  = () => { if (isSeekable()) cleanup(true); };
+
+    function cleanup(ok){
+      aud.removeEventListener("loadedmetadata", onMeta);
+      aud.removeEventListener("canplay", onCan);
+      ok ? resolve() : reject(new Error("seekable timeout"));
+    }
+
+    aud.addEventListener("loadedmetadata", onMeta);
+    aud.addEventListener("canplay", onCan);
+
+    const iv = setInterval(() => {
+      if (isSeekable()) { clearInterval(iv); cleanup(true); }
+      else if (performance.now() - start > timeoutMs) { clearInterval(iv); cleanup(false); }
+    }, 100);
   });
 }
 
-/* ====== Inicializa <audio> seguro ====== */
-function prepareAudioElement(){
-  if (!audioEl) return;
-  audioEl.src = AUDIO_URL;       // forzamos la ruta
-  audioEl.preload = "auto";
-  audioEl.playsInline = true;
-  audioEl.crossOrigin = "anonymous"; // inofensivo si es mismo host
+async function seekTo(aud, seconds){
+  try {
+    await waitSeekable(aud);
+    const end = aud.seekable.end(aud.seekable.length - 1);
+    aud.currentTime = Math.min(Math.max(0, seconds), Math.max(0, end - 0.05));
+  } catch {
+    aud.addEventListener("canplay", () => {
+      try {
+        const end = aud.seekable.end(aud.seekable.length - 1);
+        aud.currentTime = Math.min(Math.max(0, seconds), Math.max(0, end - 0.05));
+      } catch {}
+    }, { once: true });
+  }
 }
 
-/* ====== ARRANQUE SEGURO (gesture-safe) ======
-   Llama a play() inmediatamente dentro del click y corrige al START_AT.
-*/
-function startMusicGestureSafe() {
-  if (!audioEl) return;
-
-  // asegurar fuente y hints
-  audioEl.src = AUDIO_URL;
-  audioEl.preload = "auto";
-  audioEl.playsInline = true;
-
-  const setToTarget = () => {
-    const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : START_AT + 1;
-    const target = Math.max(0, Math.min(START_AT, dur - 0.05));
-    try { audioEl.currentTime = target; } catch (_) {}
-    return target;
-  };
-
-  // si ya hay metadata, posicioná ya; sino, cuando cargue
-  let target = START_AT;
-  if (audioEl.readyState >= 1) {
-    target = setToTarget();
-  } else {
-    const onMeta = () => {
-      audioEl.removeEventListener("loadedmetadata", onMeta);
-      target = setToTarget();
-    };
-    audioEl.addEventListener("loadedmetadata", onMeta);
-    try { audioEl.load(); } catch(_) {}
-  }
-
-  // 🔑 play inmediato dentro del gesto (sin await antes)
-  const p = audioEl.play();
-  if (p && p.then) {
-    p.then(() => {
-      setPauseIcon();
-    }).catch(() => {
-      // si el navegador lo bloquea, dejar botón en play
-      setPlayIcon();
-    });
-  } else {
-    setPauseIcon();
-  }
-
-  // si igual arrancó en 0, corregimos “en caliente”
-  const onPlaying = () => {
-    audioEl.removeEventListener("playing", onPlaying);
-    const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : START_AT + 1;
-    const must = Math.max(0, Math.min(START_AT, dur - 0.05));
-    if ((audioEl.currentTime || 0) < must - 0.5) {
-      try { audioEl.currentTime = must; } catch(_) {}
-    }
-  };
-  audioEl.addEventListener("playing", onPlaying, { once: true });
+async function startPlaybackFrom(second = 0) {
+  try { await audioEl.play(); } catch {}
+  await seekTo(audioEl, second);
+  try { await audioEl.play(); } catch {}
+  showMusicBtn();
+  setPauseIcon();
 }
 
-/* ====== Toggle Play/Pause ====== */
-function togglePlayPause(){
+function togglePlayback(){
   if (!audioEl) return;
-  if (audioEl.paused){
-    audioEl.play().then(setPauseIcon).catch(()=>{});
+  if (audioEl.paused) {
+    audioEl.play().then(setPauseIcon).catch(setPlayIcon);
   } else {
     audioEl.pause();
     setPlayIcon();
   }
 }
 
-/* ====== Entrar (NO BLOQUEA la UI) ====== */
-prepareAudioElement();
-if (entrarBtn){
-  entrarBtn.addEventListener("click", (e) => {
+/* ================== EVENTOS UI (Entrar + Botón música) ================== */
+if (musicBtn) {
+  setPlayIcon();
+  musicBtn.addEventListener("click", togglePlayback);
+}
+
+if (entrarBtn) {
+  entrarBtn.addEventListener("click", async (e) => {
     e.preventDefault();
-
-    // 1) Mostrar invitación SIEMPRE (nada queda trabado)
-    safeShowInvitation();
-
-    // 2) Arrancar la música con arranque seguro (gesture-safe)
-    startMusicGestureSafe();
-  });
+    safeShowInvitation();             // 1) mostramos la invitación
+    await startPlaybackFrom(START_AT);// 2) arrancamos el audio desde START_AT (gesto del usuario => iOS ok)
+  }, { passive: false });
 }
 
-/* Botón música */
-if (musicBtn){
-  musicBtn.addEventListener("click", togglePlayPause);
-}
-
-/* Reanudar si vuelve a foreground y estaba reproduciendo */
+/* Sincronizar ícono al volver al tab */
 document.addEventListener("visibilitychange", () => {
-  if (!audioEl) return;
-  if (document.visibilityState === "visible" && !audioEl.paused){
-    audioEl.play().catch(()=>{});
+  if (!musicBtn || !audioEl) return;
+  if (document.visibilityState === "visible") {
+    if (audioEl.paused) setPlayIcon(); else setPauseIcon();
   }
 });
 
-/* ====== Contador ====== */
+/* ================== CONTADOR (tu lógica original, preservada) ================== */
 if (countdown){
   const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
-  setInterval(() => {
+  const tick = () => {
     const now = Date.now();
-    const d = targetDate - now;
+    const d = Math.max(0, targetDate - now);
     const days    = Math.floor(d / (1000*60*60*24));
     const hours   = Math.floor((d % (1000*60*60*24)) / (1000*60*60));
     const minutes = Math.floor((d % (1000*60*60)) / (1000*60));
@@ -300,11 +294,12 @@ if (countdown){
       <div><strong>${minutes}</strong><span>minutos</span></div>
       <div><strong>${seconds}</strong><span>segundos</span></div>
     `;
-  }, 1000);
+  };
+  tick();
+  setInterval(tick, 1000);
 }
 </script>
-
-  
+ 
 
 </body>
 </html>
