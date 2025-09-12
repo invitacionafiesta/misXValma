@@ -176,41 +176,33 @@ footer p {
 
 /* -------- BOTÓN DE MÚSICA -------- */
 
-/* === Botón de música (sin estilo iOS/Android nativo) === */
-button#music-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
+button#music-btn{
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  width: 60px; height: 60px; border-radius: 50%;
 
-  display: none;                 /* lo muestra el JS al entrar */
-  align-items: center;
-  justify-content: center;
-
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-
-  /* 🔑 anula “pill” azul y apariencia nativa */
+  /* 🔒 anula estilos nativos en iOS/Android */
   -webkit-appearance: none !important;
   appearance: none !important;
   background-image: none !important;
+  border: 0 !important; outline: none !important; box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent;   /* sin flash al tocar */
 
-  background: #ffcee4 !important;   /* rosa de tu paleta */
+  /* tu estilo */
+  background: #ffcee4 !important;  /* rosa */
   color: #fff !important;           /* símbolo blanco */
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
 
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  font-size: 1.2rem;
-  line-height: 1;
+  /* usar glifos de texto para ▶ ⏸ (no emoji) en todos los SO */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600; font-size: 1.2rem; line-height: 1;
 
-  cursor: pointer;
-  transition: transform .15s ease, opacity .15s ease;
-  -webkit-tap-highlight-color: transparent;
+  cursor: pointer; transition: transform .15s ease, opacity .15s ease;
+  text-rendering: optimizeLegibility;
 }
+
+/* evita contenido “fantasma” de algunos navegadores */
+button#music-btn::before,
+button#music-btn::after { content: none !important; }
 
 button#music-btn:hover { transform: translateY(-2px); }
 button#music-btn:active { transform: translateY(0); }
@@ -219,6 +211,13 @@ button#music-btn:active { transform: translateY(0); }
   button#music-btn{ width:52px; height:52px; font-size:1.1rem; }
 }
 
+/* iOS WebKit: reforzar anulación si hace falta */
+@supports (-webkit-touch-callout: none) {
+  button#music-btn{
+    -webkit-appearance: none !important;
+    background-clip: padding-box !important;
+  }
+}
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }

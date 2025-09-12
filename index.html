@@ -125,8 +125,11 @@
     </div>
   </div>
 
-  <!-- Botón música (controla Web Audio) -->
-  <button id="music-btn">▶</button>
+ 
+  <!-- antes: <button id="music-btn">▶</button> -->
+<button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
+
+
 
 <script>
   /************* CONFIG *************/
@@ -211,7 +214,7 @@
   const portada    = document.getElementById("portada");
   const invitacion = document.getElementById("invitacion");
   const entrarBtn  = document.getElementById("entrar-btn");
-  const musicBtn   = document.getElementById("music-btn");
+  const musicBtn = document.getElementById("music-btn");
   const countdown  = document.getElementById("countdown");
 
   // Desbloqueo de iOS extra: si por alguna razón no arrancó, primer toque reintenta
