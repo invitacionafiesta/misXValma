@@ -190,47 +190,60 @@ function prepareAudioElement(){
   audioEl.crossOrigin = "anonymous"; // inofensivo si es mismo host
 }
 
-/* ====== Reproduce SIEMPRE desde START_AT ======
-   Pasos:
-   1) Nos aseguramos de tener metadata.
-   2) Doble seek (0 → START_AT) ANTES de play (Android lo respeta mejor).
-   3) Play (gesto de usuario).
-   4) Verificamos: si igual arrancó cerca de 0, hacemos re-seek "en caliente".
+/* ====== ARRANQUE SEGURO (gesture-safe) ======
+   Llama a play() inmediatamente dentro del click y corrige al START_AT.
 */
-async function playFromStartAt(){
+function startMusicGestureSafe() {
   if (!audioEl) return;
 
-  // 1) Metadata
-  if (audioEl.readyState < 1) { // HAVE_METADATA
+  // asegurar fuente y hints
+  audioEl.src = AUDIO_URL;
+  audioEl.preload = "auto";
+  audioEl.playsInline = true;
+
+  const setToTarget = () => {
+    const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : START_AT + 1;
+    const target = Math.max(0, Math.min(START_AT, dur - 0.05));
+    try { audioEl.currentTime = target; } catch (_) {}
+    return target;
+  };
+
+  // si ya hay metadata, posicioná ya; sino, cuando cargue
+  let target = START_AT;
+  if (audioEl.readyState >= 1) {
+    target = setToTarget();
+  } else {
+    const onMeta = () => {
+      audioEl.removeEventListener("loadedmetadata", onMeta);
+      target = setToTarget();
+    };
+    audioEl.addEventListener("loadedmetadata", onMeta);
     try { audioEl.load(); } catch(_) {}
-    await once(audioEl, "loadedmetadata", 1500);
   }
 
-  // 2) Doble seek
-  try { audioEl.currentTime = 0; } catch(_) {}
-  await sleep(0);
-  const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : START_AT + 1;
-  const target = Math.max(0, Math.min(START_AT, dur - 0.05));
-  try { audioEl.currentTime = target; } catch(_) {}
-
-  // Si todavía no posicionó, esperamos un poquito
-  if (Math.abs((audioEl.currentTime || 0) - target) > 0.25){
-    await once(audioEl, "seeked", 800);
+  // 🔑 play inmediato dentro del gesto (sin await antes)
+  const p = audioEl.play();
+  if (p && p.then) {
+    p.then(() => {
+      setPauseIcon();
+    }).catch(() => {
+      // si el navegador lo bloquea, dejar botón en play
+      setPlayIcon();
+    });
+  } else {
+    setPauseIcon();
   }
 
-  // 3) Play (ESTO DEBE EJECUTARSE DENTRO DEL CLICK de "Entrar")
-  await audioEl.play();
-
-  // 4) Corrección si igual empezó en ~0
-  await once(audioEl, "playing", 800);
-  if ((audioEl.currentTime || 0) < target - 0.5){
-    try {
-      audioEl.currentTime = target;
-      await once(audioEl, "seeked", 800);
-    } catch(_) {}
-  }
-
-  setPauseIcon();
+  // si igual arrancó en 0, corregimos “en caliente”
+  const onPlaying = () => {
+    audioEl.removeEventListener("playing", onPlaying);
+    const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : START_AT + 1;
+    const must = Math.max(0, Math.min(START_AT, dur - 0.05));
+    if ((audioEl.currentTime || 0) < must - 0.5) {
+      try { audioEl.currentTime = must; } catch(_) {}
+    }
+  };
+  audioEl.addEventListener("playing", onPlaying, { once: true });
 }
 
 /* ====== Toggle Play/Pause ====== */
@@ -250,14 +263,11 @@ if (entrarBtn){
   entrarBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    // 1) Mostrar invitación SIEMPRE
+    // 1) Mostrar invitación SIEMPRE (nada queda trabado)
     safeShowInvitation();
 
-    // 2) Iniciar el audio en background (igual cuenta como gesto de usuario)
-    playFromStartAt().catch(() => {
-      // Si por cualquier motivo no pudo, dejamos el botón en Play
-      setPlayIcon();
-    });
+    // 2) Arrancar la música con arranque seguro (gesture-safe)
+    startMusicGestureSafe();
   });
 }
 
@@ -293,6 +303,7 @@ if (countdown){
   }, 1000);
 }
 </script>
+
   
 
 </body>
