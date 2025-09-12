@@ -346,6 +346,23 @@
       `;
     }
   }, 1000);
+
+  (function addOnceUnlock(){
+  let done = false;
+  const handler = async () => {
+    if (done) return;
+    done = true;
+    try {
+      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (AudioCtx.state === "suspended") await AudioCtx.resume();
+      if (!buffer) await loadAudioBuffer();
+      if (!isPlaying) startFrom(START_AT);
+    } catch(e){ console.warn(e); }
+    ["pointerup","touchend","click","keydown"].forEach(ev => document.removeEventListener(ev, handler, {capture:true}));
+  };
+  ["pointerup","touchend","click","keydown"].forEach(ev => document.addEventListener(ev, handler, {capture:true, once:true}));
+})();
+
 </script>
 
 
