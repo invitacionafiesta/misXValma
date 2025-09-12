@@ -133,11 +133,12 @@
 <button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
   /************* CONFIG *************/
-  const START_AT = 29;                              // segundo inicial
-  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // nombre/ruta EXACTOS
+  const START_AT = 29;
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3";
 
-  /************* ELEMENTOS *************/
+  /************* ELEMENTOS (con defensas) *************/
   const portada    = document.getElementById("portada");
   const invitacion = document.getElementById("invitacion");
   const entrarBtn  = document.getElementById("entrar-btn");
@@ -145,19 +146,32 @@
   const countdown  = document.getElementById("countdown");
   const audioEl    = document.getElementById("bg-music");
 
-  // Aseguramos src y preload del <audio>
-  audioEl.src = AUDIO_URL;
-  audioEl.preload = "auto";        // ayuda a que esté listo
-  audioEl.playsInline = true;      // iOS
+  // Si falta algo clave, salimos sin romper
+  if (!portada || !invitacion || !entrarBtn) {
+    console.error("Faltan nodos base (portada/invitacion/entrar-btn). Revisá el HTML.");
+    return;
+  }
+  if (!audioEl) {
+    console.error("No existe <audio id='bg-music'>. Revisá el HTML.");
+  }
+
+  // Asegurar audio base (si existe)
+  if (audioEl) {
+    audioEl.src = AUDIO_URL;          // fuerza src correcto
+    audioEl.preload = "auto";
+    audioEl.playsInline = true;
+  }
 
   /************* ICONOS (SVG, nunca emoji) *************/
   function setPlayIcon(){
+    if (!musicBtn) return;
     musicBtn.innerHTML = `
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path fill="currentColor" d="M8 5v14l11-7-11-7z"></path>
       </svg>`;
   }
   function setPauseIcon(){
+    if (!musicBtn) return;
     musicBtn.innerHTML = `
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
@@ -175,35 +189,37 @@
 
   /************* REPRODUCIR DESDE X (fiable en Android) *************/
   async function playFrom(seconds){
-    // 1) Esperar metadata si no está
-    if (audioEl.readyState < 1) { // HAVE_METADATA
-      // Si ya está cargando, esperamos loadedmetadata; si no, forzamos carga
+    if (!audioEl) return;
+
+    // 1) Metadata
+    if (audioEl.readyState < 1) {
       const p = once(audioEl, 'loadedmetadata');
       try { audioEl.load(); } catch(_) {}
       await p;
     }
 
-    // 2) Algunos Android necesitan un “doble seek”
-    //    (primero a 0, micro-tick, y luego al segundo deseado)
+    // 2) “Doble seek” para Android
     try { audioEl.currentTime = 0; } catch(_) {}
-    await new Promise(r => setTimeout(r, 0)); // micro-delay
+    await Promise.resolve(); // micro tick
 
-    // 3) Intentar ubicar al segundo deseado
-    const target = Math.max(0, Math.min(seconds, (audioEl.duration || seconds) - 0.05));
+    // 3) Ir al segundo deseado
+    const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : seconds + 1;
+    const target = Math.max(0, Math.min(seconds, dur - 0.05));
     try { audioEl.currentTime = target; } catch(_) {}
 
-    // 4) Esperar el 'seeked' para asegurar que no arranque en 0
+    // 4) Asegurar que posicionó
     if (Math.abs((audioEl.currentTime || 0) - target) > 0.25) {
       await once(audioEl, 'seeked');
     }
 
-    // 5) Reproducir (debe ejecutarse dentro del gesto de usuario)
+    // 5) Play (gesto de usuario)
     await audioEl.play();
     setPauseIcon();
   }
 
-  /************* TOGGLE PLAY/PAUSE (respeta posición) *************/
+  /************* TOGGLE PLAY/PAUSE *************/
   function togglePlayPause(){
+    if (!audioEl) return;
     if (!audioEl.paused) {
       audioEl.pause();
       setPlayIcon();
@@ -212,27 +228,31 @@
     }
   }
 
-  /************* UI LISTENERS *************/
-  entrarBtn.addEventListener("click", async (e) => {
+  /************* CLICK ENTRAR (no bloquea la UI) *************/
+  entrarBtn.addEventListener("click", (e) => {
     e.preventDefault();
+
+    // Cambios de pantalla primero (si falla audio, igual “entrás”)
     portada.style.display = "none";
     invitacion.style.display = "block";
-    musicBtn.style.display = "flex";
+    if (musicBtn) musicBtn.style.display = "flex";
 
-    try {
-      // Todo esto corre dentro del gesto → no hay bloqueo de autoplay
-      await playFrom(START_AT);
-    } catch (err) {
-      console.warn("No se pudo iniciar desde START_AT:", err);
-      // Plan B: si falla, mostramos Play para que el usuario toque
-      setPlayIcon();
+    // Intentar iniciar desde START_AT sin bloquear
+    if (audioEl) {
+      playFrom(START_AT).catch(err => {
+        console.warn("Inicio desde START_AT falló:", err);
+        // si falla, dejamos el botón en play
+        setPlayIcon();
+      });
     }
   });
 
-  musicBtn.addEventListener("click", togglePlayPause);
+  // Botón música
+  if (musicBtn) musicBtn.addEventListener("click", togglePlayPause);
 
-  // Si la app vuelve al foreground y el SO suspendió audio, reanudar si estaba sonando
+  // Reanudar si vuelve a foreground
   document.addEventListener("visibilitychange", () => {
+    if (!audioEl) return;
     if (document.visibilityState === "visible" && !audioEl.paused) {
       audioEl.play().catch(() => {});
     }
@@ -241,6 +261,7 @@
   /************* CONTADOR *************/
   const targetDate = new Date("Nov 22, 2025 21:00:00").getTime();
   setInterval(() => {
+    if (!countdown) return;
     const now = Date.now();
     const distance = targetDate - now;
 
@@ -249,16 +270,16 @@
     const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
     const seconds = Math.floor((distance % (1000*60)) / 1000);
 
-    if (countdown) {
-      countdown.innerHTML = `
-        <div><strong>${days}</strong><span>días</span></div>
-        <div><strong>${hours}</strong><span>horas</span></div>
-        <div><strong>${minutes}</strong><span>minutos</span></div>
-        <div><strong>${seconds}</strong><span>segundos</span></div>
-      `;
-    }
+    countdown.innerHTML = `
+      <div><strong>${days}</strong><span>días</span></div>
+      <div><strong>${hours}</strong><span>horas</span></div>
+      <div><strong>${minutes}</strong><span>minutos</span></div>
+      <div><strong>${seconds}</strong><span>segundos</span></div>
+    `;
   }, 1000);
+});
 </script>
+
 
 
 
