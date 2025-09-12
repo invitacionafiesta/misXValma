@@ -155,6 +155,10 @@
     return buffer;
   }
 
+  // Íconos forzados como texto (no emoji)
+   const PLAY_ICON  = '\u25B6\uFE0E'; // ▶ en modo texto
+   const PAUSE_ICON = '\u23F8\uFE0E'; // ⏸ en modo texto
+
   function startFrom(sec) {
     if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (AudioCtx.state === "suspended") AudioCtx.resume();
@@ -172,12 +176,12 @@
     source.start(0, offset);
 
     isPlaying = true;
-    musicBtn.textContent = "⏸︎";
+    musicBtn.textContent = "PAUSE_ICON";
 
     source.onended = () => {
       // solo se ejecuta si llegó al final naturalmente
       isPlaying = false;
-      musicBtn.textContent = "▶";
+      musicBtn.textContent = "PLAY_ICON";
       offset = 0;
       source = null;
     };
@@ -196,7 +200,7 @@
         source = null;
       }
       isPlaying = false;
-      musicBtn.textContent = "▶";
+      musicBtn.textContent = "PLAY_ICON";
     } else {
       // PLAY: reanudar desde el offset guardado
       startFrom(offset);
@@ -244,7 +248,7 @@
         };
         document.addEventListener("pointerup", onceUnlock, true);
       }
-      musicBtn.textContent = "▶";
+      musicBtn.textContent = "PLAY_ICON";
     }
   });
 
