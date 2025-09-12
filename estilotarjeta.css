@@ -545,3 +545,10 @@ html, body { background-color:#fff !important; }
     color: #ffcee4 !important;
   }
 }
+
+/* Footer siempre rosa sobre fondo blanco */
+footer,
+footer * {
+  color: #ffcee4 !important;
+  background: #fff !important;
+}
