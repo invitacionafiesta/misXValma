@@ -133,6 +133,22 @@
 <button id="music-btn" type="button" aria-label="Reproducir/Pausar"></button>
 
 <script>
+  // 👇 pegá esto cerca del inicio de tu script, después de declarar AUDIO_URL y variables
+ window.addEventListener("load", async () => {
+  try {
+    // crear contexto y decodificar SIN reproducir (no viola políticas)
+    AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // dispara el prefetch si aún no corrió
+    if (!audioArrayBufferPromise) {
+      audioArrayBufferPromise = fetch(AUDIO_URL, { cache: "force-cache" })
+        .then(r => r.ok ? r.arrayBuffer() : Promise.reject(r.status));
+    }
+    await loadAudioBuffer(); // decodifica el MP3 anticipadamente
+  } catch (e) {
+    console.warn("Prewarm falló (seguimos con el flujo normal):", e);
+  }
+ });
+
   /************* CONFIG *************/
   const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
   const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // nombre EXACTO del mp3 (ruta incluida si aplica)
@@ -270,8 +286,17 @@
 
     try {
       // Crear/resumir contexto *dentro del gesto*
-      AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (AudioCtx.state === "suspended") await AudioCtx.resume();
+
+      if (!buffer) {
+      // dispara en background; cuando termine, si sigue sin sonar, arrancamos
+      loadAudioBuffer().then(() => {
+        if (!isPlaying) startFrom(START_AT);
+      }).catch(console.error);
+    }
+       if (buffer && !isPlaying) startFrom(START_AT);
+
 
       await loadAudioBuffer();      // usa el prefetch si ya bajó
       startFrom(START_AT);
