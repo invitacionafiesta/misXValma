@@ -131,7 +131,7 @@
 <script>
   /************* CONFIG *************/
   const START_AT = 29; // segundo desde el que inicia al tocar "Entrar"
-  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // ruta del MP3
+  const AUDIO_URL = "cancion%20ariana%20grande.mp3"; // revisá que el nombre coincida EXACTO
 
   /************* ESTADO WEB AUDIO *************/
   let AudioCtx, buffer = null, source = null;
@@ -140,16 +140,18 @@
   async function loadAudioBuffer() {
     if (buffer) return buffer;
     if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const res = await fetch(AUDIO_URL);
+
+    const res = await fetch(AUDIO_URL, { cache: "force-cache" });
+    if (!res.ok) throw new Error("No se pudo descargar el MP3: " + res.status);
     const arr = await res.arrayBuffer();
 
-    // decodeAudioData puede ser callback o promesa según navegador
     buffer = await new Promise((resolve, reject) => {
-      const onOk = (buf) => resolve(buf);
-      const onErr = (err) => reject(err);
-      const p = AudioCtx.decodeAudioData(arr, onOk, onErr);
+      const ok = (buf) => resolve(buf);
+      const err = (e)   => reject(e);
+      const p = AudioCtx.decodeAudioData(arr, ok, err);
       if (p && p.then) p.then(resolve).catch(reject);
     });
+
     return buffer;
   }
 
@@ -157,16 +159,14 @@
     if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (AudioCtx.state === "suspended") AudioCtx.resume();
 
-    // limpiar fuente previa si existiera
+    // limpiar fuente previa
     if (source) { try { source.stop(); } catch(e){} source.disconnect(); source = null; }
 
     source = AudioCtx.createBufferSource();
     source.buffer = buffer;
     source.connect(AudioCtx.destination);
 
-    // clamp por si se excede del final
     const startSec = Math.min(Math.max(sec, 0), buffer.duration - 0.05);
-
     offset = startSec;
     startedAt = AudioCtx.currentTime - offset;
     source.start(0, offset);
@@ -174,8 +174,8 @@
     isPlaying = true;
     musicBtn.textContent = "⏸︎";
 
-    // Solo resetear cuando termine naturalmente (no al pausar)
     source.onended = () => {
+      // solo se ejecuta si llegó al final naturalmente
       isPlaying = false;
       musicBtn.textContent = "▶";
       offset = 0;
@@ -187,17 +187,14 @@
     if (!AudioCtx || !buffer) return;
 
     if (isPlaying) {
-      // PAUSA: preservar el punto actual
+      // PAUSA: guardar posición y detener sin disparar onended
       offset = AudioCtx.currentTime - startedAt;
-
-      // Evitar que onended dispare el reset al pausar
       if (source) {
-        source.onended = null;
+        source.onended = null;  // clave para no resetear offset
         try { source.stop(); } catch(e){}
         source.disconnect();
         source = null;
       }
-
       isPlaying = false;
       musicBtn.textContent = "▶";
     } else {
@@ -213,7 +210,16 @@
   const musicBtn   = document.getElementById("music-btn");
   const countdown  = document.getElementById("countdown");
 
-  // Al tocar "Entrar": mostrar invitación, botón música y arrancar canción en START_AT
+  // Desbloqueo de iOS extra: si por alguna razón no arrancó, primer toque reintenta
+  let unlockTried = false;
+  async function tryUnlockAndStart() {
+    if (!AudioCtx) AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (AudioCtx.state === "suspended") await AudioCtx.resume();
+
+    if (!buffer) await loadAudioBuffer();
+    if (!isPlaying) startFrom(START_AT);
+  }
+
   entrarBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     portada.style.display = "none";
@@ -221,10 +227,23 @@
     musicBtn.style.display = "flex";
 
     try {
+      // Crear/resumir contexto *dentro del gesto*
+      AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (AudioCtx.state === "suspended") await AudioCtx.resume();
+
       await loadAudioBuffer();
       startFrom(START_AT);
     } catch (err) {
-      console.error("No se pudo cargar/reproducir el audio:", err);
+      console.error("No se pudo iniciar audio en 'Entrar':", err);
+      // Plan B: esperar al primer pointerup para reintentar
+      if (!unlockTried) {
+        unlockTried = true;
+        const onceUnlock = async () => {
+          document.removeEventListener("pointerup", onceUnlock, true);
+          try { await tryUnlockAndStart(); } catch (e2) { console.error(e2); }
+        };
+        document.addEventListener("pointerup", onceUnlock, true);
+      }
       musicBtn.textContent = "▶";
     }
   });
@@ -232,7 +251,7 @@
   // Botón Play/Pause
   musicBtn.addEventListener("click", togglePlayPause);
 
-  // (Opcional) Reanudar contexto al volver de background en iOS/Android
+  // Reanudar si vuelve a foreground (iOS/Android)
   document.addEventListener("visibilitychange", () => {
     if (!AudioCtx) return;
     if (document.visibilityState === "visible" && AudioCtx.state === "suspended") {
@@ -261,6 +280,8 @@
     }
   }, 1000);
 </script>
+
+  
 
 </body>
 </html>
