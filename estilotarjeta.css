@@ -531,7 +531,7 @@ html, body { background-color:#fff !important; }
   .hero, section, footer,
   .contador, .donde, .dresscode, .rsvp, .regalos, .cuando {
     background-color: #fff !important;
-    color: #333 !important;
+    color: #ffcee4 !important;
   }
   /* preserva tus secciones rosas */
   .regalos, .cuando, section.frase {
