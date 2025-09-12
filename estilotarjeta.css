@@ -518,3 +518,10 @@ section p{
   .mini-contact{ font-size:.8rem; }
   .mini-contact i{ font-size:.85rem; }
 }
+
+audio {
+  display: none !important;
+  height: 0;
+  width: 0;
+  opacity: 0;
+}
